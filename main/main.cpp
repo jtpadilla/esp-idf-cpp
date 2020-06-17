@@ -1,28 +1,49 @@
 
-#include "string"
+#include <stdio.h>
+#include "freertos/Task.h"
+#include "system/GeneralUtils.h"
 
-#include "ttn/TtnProvisioning.h"
-#include "ttn/TtnDriver.h"
-
-#include "ExampleTtnTaskFactory.h"
-
-constexpr char devEui[] = "004CFEED74AD2FA6";
-constexpr char appEui[] = "70B3D57ED00306F7";
-constexpr char appKey[] = "8214F6A2800C9FCD9B26BBE28D5CD057";
-
-extern "C" void app_main(void)
+class MyTask: public freertos::Task
 {
 
-    // Se prepara la configuracion para conectar con TTN
-    speedycontrol::ttn::TtnProvisioning ttnProvisioning { devEui, appEui, appKey };
+	public:
 
-    // Se crea el driver para comunicar con la red LoraWan
-    speedycontrol::ttn::TtnDriver ttndriver {ttnProvisioning};
+		MyTask(std::string taskName, uint32_t millisecsParam):
+			freertos::Task{taskName}, millisecs {millisecsParam}
+		{
+		}
 
-    // Se encargara de crear la tarea que se hara cargo de la session con la red.
-    ExampleTtnTaskFactory exampleTtnTaskFactory{};
+		void run(void* data) {
 
-    // Se intenta conectar y cuando se consiga se crea y inicia la tarea
-    ttndriver.connect(exampleTtnTaskFactory);
+			int count = 0;
+
+			while(count++ < 10) {
+				printf("[%s] count: %d\n", m_taskName.c_str(), count);
+				delay(millisecs);
+			}
+
+			freertos::GeneralUtils::dumpInfo();
+			printf("Done\n");
+
+		}
+
+	private:
+		uint32_t millisecs;
+
+};
+
+extern "C" void app_main() {
+
+	printf("Inicio TTN!\n");
+
+	MyTask* pMyTask1 = new MyTask("uno", 1000);
+	pMyTask1->setStackSize(20000);
+	pMyTask1->start();
+
+	MyTask* pMyTask2 = new MyTask("dossssssss", 2000);
+	pMyTask2->setStackSize(20000);
+	pMyTask2->start();
+
+	printf("Final de la tarea principal!");
 
 }
