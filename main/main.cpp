@@ -22,7 +22,7 @@ class MyTask: public freertos::Task
 				delay(millisecs);
 			}
 
-			freertos::GeneralUtils::dumpInfo();
+			systemm::GeneralUtils::dumpInfo();
 			printf("Done\n");
 
 		}

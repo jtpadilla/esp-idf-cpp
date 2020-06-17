@@ -12,7 +12,7 @@
 #include <esp_system.h>
 #include "esp_log.h"
 
-namespace freertos
+namespace systemm
 {
 
 	static const char* LOG_TAG = "GeneralUtils";
