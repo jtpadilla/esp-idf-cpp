@@ -7,7 +7,7 @@
 #include "lmic/lmic.h"
 
 #include "Ttn.h"
-#include "TTNProvisioning.h"
+#include "TtnProvisioning.h"
 #include "TtnLogging.h"
 
 
@@ -52,7 +52,7 @@ static const char *TAG = "ttn";
 static Ttn* ttnInstance;
 static QueueHandle_t lmicEventQueue = nullptr;
 static TTNWaitingReason waitingReason = eWaitingNone;
-static TTNProvisioning provisioning;
+static TtnProvisioning provisioning;
 
 #if LMIC_ENABLE_event_logging
 static TTNLogging* logging;

@@ -16,7 +16,7 @@
 #include "esp_log.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
-#include "TTNProvisioning.h"
+#include "TtnProvisioning.h"
 #include "lmic/lmic.h"
 #include "hal/hal_esp32.h"
 
@@ -68,7 +68,7 @@ void os_getDevKey (u1_t* buf)
 
 // --- Constructor
 
-TTNProvisioning::TTNProvisioning()
+TtnProvisioning::TtnProvisioning()
     : have_keys(false)
 #if defined(TTN_HAS_AT_COMMANDS)
         , uart_queue(nullptr), line_buf(nullptr), line_length(0), last_line_end_char(0), quit_task(false)
@@ -81,7 +81,7 @@ TTNProvisioning::TTNProvisioning()
 
 #if defined(TTN_HAS_AT_COMMANDS)
 
-void TTNProvisioning::startTask()
+void TtnProvisioning::startTask()
 {
 #if defined(TTN_CONFIG_UART)
     configUART();
@@ -99,7 +99,7 @@ void ttn_provisioning_task_caller(void* pvParameter)
     provisioning->provisioningTask();
 }
 
-void TTNProvisioning::provisioningTask()
+void TtnProvisioning::provisioningTask()
 {
     line_buf = (char*)malloc(MAX_LINE_LENGTH + 1);
     line_length = 0;
@@ -135,7 +135,7 @@ void TTNProvisioning::provisioningTask()
     vTaskDelete(nullptr);
 }
 
-void TTNProvisioning::addLineData(int numBytes)
+void TtnProvisioning::addLineData(int numBytes)
 {
     int n;
 top:
@@ -156,7 +156,7 @@ top:
     }
 }
 
-void TTNProvisioning::detectLineEnd(int start_at)
+void TtnProvisioning::detectLineEnd(int start_at)
 {
 top:
     for (int p = start_at; p < line_length; p++)
@@ -189,7 +189,7 @@ top:
         line_length = 0; // Line too long; flush it
 }
 
-void TTNProvisioning::processLine()
+void TtnProvisioning::processLine()
 {
     bool is_ok = true;
     bool reset_needed = false;
@@ -297,7 +297,7 @@ void TTNProvisioning::processLine()
 
 #if defined(TTN_CONFIG_UART)
 
-void TTNProvisioning::configUART()
+void TtnProvisioning::configUART()
 {
     esp_err_t err;
 
@@ -322,17 +322,17 @@ void TTNProvisioning::configUART()
 
 // --- Key handling
 
-bool TTNProvisioning::haveKeys()
+bool TtnProvisioning::haveKeys()
 {
     return have_keys;
 }
 
-bool TTNProvisioning::decodeKeys(const char *dev_eui, const char *app_eui, const char *app_key)
+bool TtnProvisioning::decodeKeys(const char *dev_eui, const char *app_eui, const char *app_key)
 {
     return decode(true, dev_eui, app_eui, app_key);
 }
 
-bool TTNProvisioning::fromMAC(const char *app_eui, const char *app_key)
+bool TtnProvisioning::fromMAC(const char *app_eui, const char *app_key)
 {
     uint8_t mac[6];
     esp_err_t err = esp_efuse_mac_get_default(mac);
@@ -350,7 +350,7 @@ bool TTNProvisioning::fromMAC(const char *app_eui, const char *app_key)
     return decode(false, nullptr, app_eui, app_key);
 }
 
-bool TTNProvisioning::decode(bool incl_dev_eui, const char *dev_eui, const char *app_eui, const char *app_key)
+bool TtnProvisioning::decode(bool incl_dev_eui, const char *dev_eui, const char *app_eui, const char *app_key)
 {
     uint8_t buf_dev_eui[8];
     uint8_t buf_app_eui[8];
@@ -397,7 +397,7 @@ bool TTNProvisioning::decode(bool incl_dev_eui, const char *dev_eui, const char 
 
 // --- Non-volatile storage
 
-bool TTNProvisioning::saveKeys()
+bool TtnProvisioning::saveKeys()
 {
     bool result = false;
 
@@ -432,7 +432,7 @@ done:
     return result;
 }
 
-bool TTNProvisioning::restoreKeys(bool silent)
+bool TtnProvisioning::restoreKeys(bool silent)
 {
     uint8_t buf_dev_eui[8];
     uint8_t buf_app_eui[8];
@@ -482,7 +482,7 @@ done:
     return true;
 }
 
-bool TTNProvisioning::readNvsValue(nvs_handle handle, const char* key, uint8_t* data, size_t expected_length, bool silent)
+bool TtnProvisioning::readNvsValue(nvs_handle handle, const char* key, uint8_t* data, size_t expected_length, bool silent)
 {
     size_t size = expected_length;
     esp_err_t res = nvs_get_blob(handle, key, data, &size);
@@ -507,7 +507,7 @@ bool TTNProvisioning::readNvsValue(nvs_handle handle, const char* key, uint8_t* 
     return false;
 }
 
-bool TTNProvisioning::writeNvsValue(nvs_handle handle, const char* key, const uint8_t* data, size_t len)
+bool TtnProvisioning::writeNvsValue(nvs_handle handle, const char* key, const uint8_t* data, size_t len)
 {
     uint8_t buf[16];
     if (readNvsValue(handle, key, buf, len, true) && memcmp(buf, data, len) == 0)
@@ -522,7 +522,7 @@ bool TTNProvisioning::writeNvsValue(nvs_handle handle, const char* key, const ui
 
 // --- Helper functions ---
 
-bool TTNProvisioning::hexStrToBin(const char *hex, uint8_t *buf, int len)
+bool TtnProvisioning::hexStrToBin(const char *hex, uint8_t *buf, int len)
 {
     const char* ptr = hex;
     for (int i = 0; i < len; i++)
@@ -536,7 +536,7 @@ bool TTNProvisioning::hexStrToBin(const char *hex, uint8_t *buf, int len)
     return true;
 }
 
-int TTNProvisioning::hexTupleToByte(const char *hex)
+int TtnProvisioning::hexTupleToByte(const char *hex)
 {
     int nibble1 = hexDigitToVal(hex[0]);
     if (nibble1 < 0)
@@ -547,7 +547,7 @@ int TTNProvisioning::hexTupleToByte(const char *hex)
     return (nibble1 << 4) | nibble2;
 }
 
-int TTNProvisioning::hexDigitToVal(char ch)
+int TtnProvisioning::hexDigitToVal(char ch)
 {
     if (ch >= '0' && ch <= '9')
         return ch - '0';
@@ -558,7 +558,7 @@ int TTNProvisioning::hexDigitToVal(char ch)
     return -1;
 }
 
-void TTNProvisioning::binToHexStr(const uint8_t* buf, int len, char* hex)
+void TtnProvisioning::binToHexStr(const uint8_t* buf, int len, char* hex)
 {
     for (int i = 0; i < len; i++)
     {
@@ -570,12 +570,12 @@ void TTNProvisioning::binToHexStr(const uint8_t* buf, int len, char* hex)
     }
 }
 
-char TTNProvisioning::valToHexDigit(int val)
+char TtnProvisioning::valToHexDigit(int val)
 {
     return "0123456789ABCDEF"[val];
 }
 
-void TTNProvisioning::swapBytes(uint8_t* buf, int len)
+void TtnProvisioning::swapBytes(uint8_t* buf, int len)
 {
     uint8_t* p1 = buf;
     uint8_t* p2 = buf + len - 1;
@@ -589,7 +589,7 @@ void TTNProvisioning::swapBytes(uint8_t* buf, int len)
     }
 }
 
-bool TTNProvisioning::isAllZeros(const uint8_t* buf, int len)
+bool TtnProvisioning::isAllZeros(const uint8_t* buf, int len)
 {
     for (int i = 0; i < len; i++)
         if (buf[i] != 0)

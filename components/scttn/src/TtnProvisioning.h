@@ -17,10 +17,10 @@
 #include "nvs_flash.h"
 
 
-class TTNProvisioning
+class TtnProvisioning
 {
 public:
-    TTNProvisioning();
+    TtnProvisioning();
 
     bool haveKeys();
     bool decodeKeys(const char *dev_eui, const char *app_eui, const char *app_key);
