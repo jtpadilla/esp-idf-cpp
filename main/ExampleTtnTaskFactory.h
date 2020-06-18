@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ttn/TtnTaskFactory.h"
+#include "TtnTaskFactory.h"
 #include "ExampleTtnTask.h"
 
-class ExampleTtnTaskFactory: public speedycontrol::ttn::ITtnTaskFactory {
+class ExampleTtnTaskFactory: public scttn::ITtnTaskFactory {
 
     public:
 

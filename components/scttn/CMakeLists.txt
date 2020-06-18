@@ -1,6 +1,19 @@
 
-idf_component_register(
-    SRCS "TtnDriver.cpp"
-    INCLUDE_DIRS "include"
-    REQUIRES ttn-esp32 
+set(COMPONENT_SRCDIRS
+    "src"
+    "src/aes"
+    "src/hal"
+    "src/lmic"
 )
+set(COMPONENT_ADD_INCLUDEDIRS
+    "include"
+)
+set(COMPONENT_REQUIRES
+    nvs_flash
+)
+
+register_component()
+
+if (IDF_VER STRGREATER_EQUAL "v4.0")
+target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-expansion-to-defined)
+endif()

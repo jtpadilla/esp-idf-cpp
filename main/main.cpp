@@ -4,6 +4,6 @@ extern void mainTtn();
 
 extern "C" void app_main(void)
 {
-    mainFreeRtos();
-    //mainTtn();
+    //mainFreeRtos();
+    mainTtn();
 }
