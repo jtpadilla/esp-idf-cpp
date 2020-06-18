@@ -1,7 +1,7 @@
 idf_component_register(
     SRCS 
+        "mainFreeRtos.cpp" 
         "main.cpp" 
-        "mainTtn.cpp" 
 
         "ExampleTtnTaskFactory.h"
         "ExampleTtnTask.h"
