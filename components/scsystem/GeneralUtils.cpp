@@ -1,4 +1,3 @@
-#include "GeneralUtils.h"
 #include <esp_system.h>
 #include <string.h>
 #include <stdio.h>
@@ -6,13 +5,14 @@
 #include <sstream>
 #include <iomanip>
 #include <esp_err.h>
-#include <nvs.h>
 #include <esp_wifi.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
 #include "esp_log.h"
 
-namespace esp32sys
+#include <GeneralUtils.h>
+
+namespace scsystem
 {
 
 	static const char* LOG_TAG = "GeneralUtils";

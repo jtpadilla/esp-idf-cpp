@@ -1,20 +1,15 @@
-/*
- * System.cpp
- *
- *  Created on: May 27, 2017
- *      Author: kolban
- */
 
-#include "System.h"
 #include <esp_system.h>
 #include <soc/gpio_struct.h>
 #include <stdio.h>
+
+#include <System.h>
 
 extern "C" {
 #include <esp_heap_caps.h>
 }
 
-namespace esp32sys
+namespace scsystem
 {
 
 	typedef volatile struct {

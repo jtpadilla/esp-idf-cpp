@@ -4,7 +4,7 @@
 #include <string>
 #include <esp_system.h>
 
-namespace esp32sys
+namespace scsystem
 {
 
 	/**

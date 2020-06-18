@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "Task.h"
-#include "system/GeneralUtils.h"
+#include "GeneralUtils.h"
 
 class MyTask: public scfreertos::Task
 {
@@ -23,7 +23,7 @@ class MyTask: public scfreertos::Task
 				delay(millisecs);
 			}
 
-			esp32sys::GeneralUtils::dumpInfo();
+			scsystem::GeneralUtils::dumpInfo();
 			printf("Done\n");
 
 		}

@@ -7,15 +7,10 @@ idf_component_register(
         "ExampleTtnTask.h"
         "ExampleTtnTask.cpp"
 
-        "system/System.cpp" 
-        "system/System.h"
-        "system/GeneralUtils.cpp" 
-        "system/GeneralUtils.h"
-
         "ttn/TtnProvisioning.h" 
         "ttn/TtnDriver.h" 
         "ttn/TtnDriver.cpp" 
         "ttn/TtnTaskFactory.h"
 
-    REQUIRES ttn-esp32 scfreertos
+    REQUIRES ttn-esp32 scfreertos scsystem
 )

@@ -8,7 +8,7 @@
 
 #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 
-namespace esp32sys
+namespace scsystem
 {
 
 	/**
