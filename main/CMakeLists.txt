@@ -12,15 +12,6 @@ idf_component_register(
         "system/GeneralUtils.cpp" 
         "system/GeneralUtils.h"
 
-        "freertos/Timer.cpp" 
-        "freertos/Timer.h"
-        "freertos/Task.cpp" 
-        "freertos/Task.h"
-        "freertos/Semaphore.cpp" 
-        "freertos/Semaphore.h"
-        "freertos/RingBuffer.cpp" 
-        "freertos/RingBuffer.h"
-
         "ttn/TtnProvisioning.h" 
         "ttn/TtnDriver.h" 
         "ttn/TtnDriver.cpp" 

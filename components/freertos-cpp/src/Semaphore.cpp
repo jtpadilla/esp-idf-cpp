@@ -1,7 +1,7 @@
 #include <sstream>
 #include <iomanip>
 #include "esp_log.h"
-#include "Semaphore.h"
+#include <Semaphore.h>
 
 static const char* LOG_TAG = "Semaphore";
 
