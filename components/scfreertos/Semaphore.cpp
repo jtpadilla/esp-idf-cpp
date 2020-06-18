@@ -5,7 +5,7 @@
 
 static const char* LOG_TAG = "Semaphore";
 
-namespace freertos
+namespace scfreertos
 {
 
 	/**

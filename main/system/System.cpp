@@ -14,7 +14,7 @@ extern "C" {
 #include <esp_heap_caps.h>
 }
 
-namespace systemm
+namespace esp32sys
 {
 
 	typedef volatile struct {

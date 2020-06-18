@@ -4,7 +4,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 
-namespace freertos
+namespace scfreertos
 {
     
     class Semaphore {

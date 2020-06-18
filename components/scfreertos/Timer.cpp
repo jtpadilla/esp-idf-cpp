@@ -10,7 +10,7 @@
 
 #include <Timer.h>
 
-namespace freertos
+namespace scfreertos
 {
 
 	static std::map<void*, Timer*> timersMap;

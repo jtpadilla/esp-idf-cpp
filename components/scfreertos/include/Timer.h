@@ -4,7 +4,7 @@
 #include <freertos/task.h>
 #include <freertos/timers.h>
 
-namespace freertos
+namespace scfreertos
 {
 
 	/**

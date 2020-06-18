@@ -17,5 +17,5 @@ idf_component_register(
         "ttn/TtnDriver.cpp" 
         "ttn/TtnTaskFactory.h"
 
-    REQUIRES ttn-esp32
+    REQUIRES ttn-esp32 scfreertos
 )

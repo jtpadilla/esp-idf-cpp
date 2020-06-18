@@ -1,8 +1,7 @@
 
-
 #include <RingBuffer.h>
 
-namespace freertos
+namespace scfreertos
 {
 
 	/**
