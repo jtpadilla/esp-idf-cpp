@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace speedycontrol::ttn
+namespace scttn
 {
     class TtnProvisioning
     {

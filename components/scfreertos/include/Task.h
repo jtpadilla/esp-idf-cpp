@@ -4,8 +4,6 @@
 #include <freertos/task.h>
 #include <string>
 
-#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
-
 namespace scfreertos
 {
 

@@ -20,7 +20,7 @@
 
 const unsigned JOIN_RETRY_INTERVAL = 30;
 
-namespace speedycontrol::ttn
+namespace scttn
 {
 
     TtnDriver::TtnDriver(const TtnProvisioning& ttnProvisioningParameter):

@@ -4,7 +4,7 @@
 #include "TtnProvisioning.h"
 #include "TtnTaskFactory.h"
 
-namespace speedycontrol::ttn
+namespace scttn
 {
     class TtnDriver 
     {

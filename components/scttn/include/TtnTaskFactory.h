@@ -2,7 +2,7 @@
 
 #include "TheThingsNetwork.h"
 
-namespace speedycontrol::ttn
+namespace scttn
 {
     class ITtnTaskFactory
     {

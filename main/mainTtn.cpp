@@ -1,8 +1,8 @@
 
 #include "string"
 
-#include "ttn/TtnProvisioning.h"
-#include "ttn/TtnDriver.h"
+#include "TtnProvisioning.h"
+#include "TtnDriver.h"
 
 #include "ExampleTtnTaskFactory.h"
 
@@ -14,10 +14,10 @@ void mainTtn(void)
 {
 
     // Se prepara la configuracion para conectar con TTN
-    speedycontrol::ttn::TtnProvisioning ttnProvisioning { devEui, appEui, appKey };
+    scttn::TtnProvisioning ttnProvisioning { devEui, appEui, appKey };
 
     // Se crea el driver para comunicar con la red LoraWan
-    speedycontrol::ttn::TtnDriver ttndriver {ttnProvisioning};
+    scttn::TtnDriver ttndriver {ttnProvisioning};
 
     // Se encargara de crear la tarea que se hara cargo de la session con la red.
     ExampleTtnTaskFactory exampleTtnTaskFactory{};
