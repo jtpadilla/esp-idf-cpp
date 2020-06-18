@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TtnTaskFactory.h"
+#include "Ttn.h"
 #include "ExampleTtnTask.h"
 
 class ExampleTtnTaskFactory: public scttn::ITtnTaskFactory {
@@ -13,7 +13,7 @@ class ExampleTtnTaskFactory: public scttn::ITtnTaskFactory {
             }
         }
 
-        virtual void createAndLaunch(TheThingsNetwork& ttn)
+        virtual void createAndLaunch(Ttn& ttn)
         {
             task = new ExampleTtnTask(ttn);
             task->launch();

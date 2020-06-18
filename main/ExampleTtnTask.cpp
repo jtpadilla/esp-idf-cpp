@@ -4,7 +4,7 @@
 
 #include "ExampleTtnTask.h"
 
-ExampleTtnTask::ExampleTtnTask(TheThingsNetwork& ttnParam): 
+ExampleTtnTask::ExampleTtnTask(Ttn& ttnParam): 
     ttn{ttnParam}
 {
 }

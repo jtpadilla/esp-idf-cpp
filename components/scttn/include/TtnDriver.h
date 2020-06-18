@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TheThingsNetwork.h"
+#include "Ttn.h"
 #include "TtnProvisioning.h"
 #include "TtnTaskFactory.h"
 
@@ -15,7 +15,7 @@ namespace scttn
 
         private:
             TtnProvisioning ttnProvisioning;
-            TheThingsNetwork ttn;
+            Ttn ttn;
 
     };
 

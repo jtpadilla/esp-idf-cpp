@@ -1,13 +1,13 @@
 #pragma once
 
-#include "TheThingsNetwork.h"
+#include "Ttn.h"
 
 namespace scttn
 {
     class ITtnTaskFactory
     {
         public:
-            virtual void createAndLaunch(TheThingsNetwork& ttn) = 0;
+            virtual void createAndLaunch(Ttn& ttn) = 0;
     };
 
 }

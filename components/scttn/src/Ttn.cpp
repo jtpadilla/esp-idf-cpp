@@ -1,27 +1,16 @@
-/*******************************************************************************
- * 
- * ttn-esp32 - The Things Network device library for ESP-IDF / SX127x
- * 
- * Copyright (c) 2018-2019 Manuel Bleichenbacher
- * 
- * Licensed under MIT License
- * https://opensource.org/licenses/MIT
- *
- * High-level API for ttn-esp32.
- *******************************************************************************/
 
 #include "freertos/FreeRTOS.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "hal/hal_esp32.h"
 #include "lmic/lmic.h"
-#include "TheThingsNetwork.h"
+#include "Ttn.h"
 #include "TTNProvisioning.h"
 #include "TTNLogging.h"
 
 
 /**
- * @brief Reason the user code is waiting
+ * Motivo por el que el codigo del usuario esta esperando
  */
 enum TTNWaitingReason
 {
@@ -31,7 +20,7 @@ enum TTNWaitingReason
 };
 
 /**
- * @brief Event type
+ * Tipo de evento
  */
 enum TTNEvent {
     eEvtNone,
@@ -43,23 +32,26 @@ enum TTNEvent {
 };
 
 /**
- * @brief Event message sent from LMIC task to waiting client task
+ * Evento enviado desde LMIC a la tarea del cliente que esta esperando
  */
 struct TTNLmicEvent {
+
     TTNLmicEvent(TTNEvent ev = eEvtNone): event(ev) { }
 
     TTNEvent event;
     uint8_t port;
     const uint8_t* message;
     size_t messageSize;
+    
 };
 
 static const char *TAG = "ttn";
 
-static TheThingsNetwork* ttnInstance;
+static Ttn* ttnInstance;
 static QueueHandle_t lmicEventQueue = nullptr;
 static TTNWaitingReason waitingReason = eWaitingNone;
 static TTNProvisioning provisioning;
+
 #if LMIC_ENABLE_event_logging
 static TTNLogging* logging;
 #endif
@@ -69,7 +61,7 @@ static void messageReceivedCallback(void *userData, uint8_t port, const uint8_t 
 static void messageTransmittedCallback(void *userData, int success);
 
 
-TheThingsNetwork::TheThingsNetwork()
+Ttn::Ttn()
     : messageCallback(nullptr)
 {
 #if defined(TTN_IS_DISABLED)
@@ -82,12 +74,12 @@ TheThingsNetwork::TheThingsNetwork()
     ttn_hal.initCriticalSection();
 }
 
-TheThingsNetwork::~TheThingsNetwork()
+Ttn::~Ttn()
 {
     // nothing to do
 }
 
-void TheThingsNetwork::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
+void Ttn::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
 {
     ttn_hal.configurePins(spi_host, nss, rxtx, rst, dio0, dio1);
 
@@ -106,7 +98,7 @@ void TheThingsNetwork::configurePins(spi_host_device_t spi_host, uint8_t nss, ui
     ttn_hal.startLMICTask();
 }
 
-void TheThingsNetwork::reset()
+void Ttn::reset()
 {
     ttn_hal.enterCriticalSection();
     LMIC_reset();
@@ -118,7 +110,7 @@ void TheThingsNetwork::reset()
     ttn_hal.leaveCriticalSection();
 }
 
-bool TheThingsNetwork::provision(const char *devEui, const char *appEui, const char *appKey)
+bool Ttn::provision(const char *devEui, const char *appEui, const char *appKey)
 {
     if (!provisioning.decodeKeys(devEui, appEui, appKey))
         return false;
@@ -126,7 +118,7 @@ bool TheThingsNetwork::provision(const char *devEui, const char *appEui, const c
     return provisioning.saveKeys();
 }
 
-bool TheThingsNetwork::provisionWithMAC(const char *appEui, const char *appKey)
+bool Ttn::provisionWithMAC(const char *appEui, const char *appKey)
 {
     if (!provisioning.fromMAC(appEui, appKey))
         return false;
@@ -135,7 +127,7 @@ bool TheThingsNetwork::provisionWithMAC(const char *appEui, const char *appKey)
 }
 
 
-void TheThingsNetwork::startProvisioningTask()
+void Ttn::startProvisioningTask()
 {
 #if defined(TTN_HAS_AT_COMMANDS)
     provisioning.startTask();
@@ -146,7 +138,7 @@ void TheThingsNetwork::startProvisioningTask()
 #endif
 }
 
-void TheThingsNetwork::waitForProvisioning()
+void Ttn::waitForProvisioning()
 {
 #if defined(TTN_HAS_AT_COMMANDS)
     if (isProvisioned())
@@ -166,7 +158,7 @@ void TheThingsNetwork::waitForProvisioning()
 #endif
 }
 
-bool TheThingsNetwork::join(const char *devEui, const char *appEui, const char *appKey)
+bool Ttn::join(const char *devEui, const char *appEui, const char *appKey)
 {
     if (!provisioning.decodeKeys(devEui, appEui, appKey))
         return false;
@@ -174,7 +166,7 @@ bool TheThingsNetwork::join(const char *devEui, const char *appEui, const char *
     return joinCore();
 }
 
-bool TheThingsNetwork::join()
+bool Ttn::join()
 {
     if (!provisioning.haveKeys())
     {
@@ -185,7 +177,7 @@ bool TheThingsNetwork::join()
     return joinCore();
 }
 
-bool TheThingsNetwork::joinCore()
+bool Ttn::joinCore()
 {
     if (!provisioning.haveKeys())
     {
@@ -204,7 +196,7 @@ bool TheThingsNetwork::joinCore()
     return event.event == eEvtJoinCompleted;
 }
 
-TTNResponseCode TheThingsNetwork::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
+TTNResponseCode Ttn::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
 {
     ttn_hal.enterCriticalSection();
     if (waitingReason != eWaitingNone || (LMIC.opmode & OP_TXRXPEND) != 0)
@@ -244,13 +236,13 @@ TTNResponseCode TheThingsNetwork::transmitMessage(const uint8_t *payload, size_t
     }
 }
 
-void TheThingsNetwork::onMessage(TTNMessageCallback callback)
+void Ttn::onMessage(TTNMessageCallback callback)
 {
     messageCallback = callback;
 }
 
 
-bool TheThingsNetwork::isProvisioned()
+bool Ttn::isProvisioned()
 {
     if (provisioning.haveKeys())
         return true;
@@ -260,7 +252,7 @@ bool TheThingsNetwork::isProvisioned()
     return provisioning.haveKeys();
 }
 
-void TheThingsNetwork::setRSSICal(int8_t rssiCal)
+void Ttn::setRSSICal(int8_t rssiCal)
 {
     ttn_hal.rssiCal = rssiCal;
 }
@@ -304,7 +296,7 @@ void eventCallback(void* userData, ev_t event)
     xQueueSend(lmicEventQueue, &result, pdMS_TO_TICKS(100));
 }
 
-// Called by LMIC when a message has been received
+// Sera llamado por LMIC cuando se reciba un mensaje
 void messageReceivedCallback(void *userData, uint8_t port, const uint8_t *message, size_t nMessage)
 {
     TTNLmicEvent result(eEvtMessageReceived);
@@ -314,7 +306,7 @@ void messageReceivedCallback(void *userData, uint8_t port, const uint8_t *messag
     xQueueSend(lmicEventQueue, &result, pdMS_TO_TICKS(100));
 }
 
-// Called by LMIC when a message has been transmitted (or the transmission failed)
+// sera llamado por LMIC cuando un mensaje se ha transmitido (o la transmision ha fallado)
 void messageTransmittedCallback(void *userData, int success)
 {
     waitingReason = eWaitingNone;

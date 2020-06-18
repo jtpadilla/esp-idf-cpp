@@ -47,23 +47,23 @@ typedef void (*TTNMessageCallback)(const uint8_t* payload, size_t length, port_t
 /**
  * @brief TTN device
  * 
- * The 'TheThingsNetwork' class enables ESP32 devices with SX1272/73/76/77/78/79 LoRaWAN chips
+ * The 'Ttn' class enables ESP32 devices with SX1272/73/76/77/78/79 LoRaWAN chips
  * to communicate via The Things Network.
  * 
  * Only one instance of this class must be created.
  */
-class TheThingsNetwork
+class Ttn
 {
 public:
     /**
      * @brief Construct a new The Things Network device instance.
      */
-    TheThingsNetwork();
+    Ttn();
 
     /**
      * @brief Destroy the The Things Network device instance.
      */
-    ~TheThingsNetwork();
+    ~Ttn();
 
     /**
      * @brief Reset the LoRaWAN radio.

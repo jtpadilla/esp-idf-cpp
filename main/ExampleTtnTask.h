@@ -1,15 +1,15 @@
 #pragma once
 
-#include "TheThingsNetwork.h"
+#include "Ttn.h"
 
 class ExampleTtnTask {
 
     public:
-        ExampleTtnTask(TheThingsNetwork& ttn);
+        ExampleTtnTask(Ttn& ttn);
         void launch();
 
     private:
-        TheThingsNetwork ttn;
+        Ttn ttn;
 
         void txTask(void* pvParameter);
         void messageReceived(const uint8_t* message, size_t length, port_t port);
