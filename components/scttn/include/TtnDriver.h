@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Ttn.h"
-#include "TtnProvisioning.h"
+#include "TtnParameters.h"
 #include "TtnTaskFactory.h"
 
 namespace scttn
@@ -10,11 +10,11 @@ namespace scttn
     {
 
         public:
-            TtnDriver(const TtnProvisioning& ttnProvisioningParameter);
+            TtnDriver(const TtnParameters& ttnParametersParameter);
             void connect(ITtnTaskFactory& ttnTaskFactory);
 
         private:
-            TtnProvisioning ttnProvisioning;
+            TtnParameters ttnParameters;
             Ttn ttn;
 
     };

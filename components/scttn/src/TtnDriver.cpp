@@ -23,8 +23,8 @@ const unsigned JOIN_RETRY_INTERVAL = 30;
 namespace scttn
 {
 
-    TtnDriver::TtnDriver(const TtnProvisioning& ttnProvisioningParameter):
-        ttnProvisioning {ttnProvisioningParameter}
+    TtnDriver::TtnDriver(const TtnParameters& ttnParametersArg):
+        ttnParameters {ttnParametersArg}
     {
 
         esp_err_t err;
@@ -55,7 +55,7 @@ namespace scttn
         ttn.configurePins(TTN_SPI_HOST, TTN_PIN_NSS, TTN_PIN_RXTX, TTN_PIN_RST, TTN_PIN_DIO0, TTN_PIN_DIO1);
 
         // The below line can be commented after the first run as the data is saved in NVS
-        ttn.provision(ttnProvisioning.getDevEui(), ttnProvisioning.getAppEui(), ttnProvisioning.getAppKey());
+        ttn.provision(ttnParameters.getDevEui(), ttnParameters.getAppEui(), ttnParameters.getAppKey());
 
         // Debug
         printf("end: TtnDriver::finalizado la initi()\n");

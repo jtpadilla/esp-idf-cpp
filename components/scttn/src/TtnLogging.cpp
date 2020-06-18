@@ -68,14 +68,14 @@ static void bin2hex(const uint8_t* bin, unsigned len, char* buf, char sep = 0);
 
 
 // Create singleton instance
-TTNLogging* TTNLogging::initInstance()
+TTNLogging* TtnLogging::initInstance()
 {
     ttnLog.init();
     return &ttnLog;
 }
 
 // Initialize logging
-void TTNLogging::init()
+void TtnLogging::init()
 {
     ringBuffer = xRingbufferCreate(NUM_RINGBUF_MSG * sizeof(TTNLogMessage), RINGBUF_TYPE_NOSPLIT);
     if (ringBuffer == nullptr) {
@@ -88,7 +88,7 @@ void TTNLogging::init()
 }
 
 // Record a logging event for later output
-void TTNLogging::logEvent(int event, const char* message, uint32_t datum)
+void TtnLogging::logEvent(int event, const char* message, uint32_t datum)
 {
     if (ringBuffer == nullptr)
         return;
@@ -117,7 +117,7 @@ void TTNLogging::logEvent(int event, const char* message, uint32_t datum)
 }
 
 // record a fatal event (failed assert) for later output
-void TTNLogging::logFatal(const char* file, uint16_t line)
+void TtnLogging::logFatal(const char* file, uint16_t line)
 {
     ttnLog.logEvent(-3, file, line);
 }
@@ -142,7 +142,7 @@ extern "C" void LMICOS_logEventUint32(const char *pMessage, uint32_t datum)
 // Log output
 
 // Tasks that receiveds the recorded messages, formats and outputs them.
-void TTNLogging::loggingTask(void* param)
+void TtnLogging::loggingTask(void* param)
 {
     RingbufHandle_t ringBuffer = (RingbufHandle_t)param;
 

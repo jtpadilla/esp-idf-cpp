@@ -4,12 +4,12 @@
 
 namespace scttn
 {
-    class TtnProvisioning
+    class TtnParameters
     {
 
         public:
 
-            TtnProvisioning(const char devEuiParam[], const char appEuiParam[], const char appKeyParam[]):
+            TtnParameters(const char devEuiParam[], const char appEuiParam[], const char appKeyParam[]):
                 devEui {devEuiParam}, appEui {appEuiParam}, appKey {appKeyParam}
             {
             }

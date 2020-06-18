@@ -36,7 +36,7 @@
  * 
  * This class is not to be used directly.
  */
-class TTNLogging {
+class TtnLogging {
 public:
     static TTNLogging* initInstance();
 

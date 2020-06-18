@@ -2,11 +2,13 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_event.h"
 #include "esp_log.h"
+
 #include "hal/hal_esp32.h"
 #include "lmic/lmic.h"
+
 #include "Ttn.h"
 #include "TTNProvisioning.h"
-#include "TTNLogging.h"
+#include "TtnLogging.h"
 
 
 /**
