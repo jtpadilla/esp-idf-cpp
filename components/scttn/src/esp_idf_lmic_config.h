@@ -43,13 +43,6 @@
 #error TTN LoRa radio chip must be configured using 'make menuconfig'
 #endif
 
-#if !defined(CONFIG_TTN_PROVISION_UART_NONE)
-#define TTN_HAS_AT_COMMANDS 1
-#if defined(CONFIG_TTN_PROVISION_UART_CONFIG_YES)
-#define TTN_CONFIG_UART 1
-#endif
-#endif
-
 
 // 16 μs per tick
 // LMIC requires ticks to be 15.5μs - 100 μs long
