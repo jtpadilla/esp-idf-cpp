@@ -210,7 +210,7 @@ namespace sc::lorawan
         return event.event == eEvtJoinCompleted;
     }
 
-    TTNResponseCode Lorawan::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
+    LorawanResponseCode Lorawan::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
     {
         ttn_hal.enterCriticalSection();
         if (waitingReason != eWaitingNone || (LMIC.opmode & OP_TXRXPEND) != 0)

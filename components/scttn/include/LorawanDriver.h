@@ -12,7 +12,7 @@ namespace sc::lorawan
     /**
      * @brief Response codes
      */
-    enum TTNResponseCode
+    enum LorawanResponseCode
     {
         kTTNErrorTransmissionFailed = -1,
         kTTNErrorUnexpected = -10,
@@ -176,7 +176,7 @@ namespace sc::lorawan
              * @return kTTNErrorTransmissionFailed   Transmission failed
              * @return TkTTNErrorUnexpected          Unexpected error
              */
-            TTNResponseCode transmitMessage(const uint8_t *payload, size_t length, port_t port = 1, bool confirm = false);
+            LorawanResponseCode transmitMessage(const uint8_t *payload, size_t length, port_t port = 1, bool confirm = false);
 
             /**
              * @brief Set the function to be called when a message is received
