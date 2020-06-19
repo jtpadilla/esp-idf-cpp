@@ -53,7 +53,6 @@ namespace sc::lorawan
     static Ttn* ttnInstance;
     static QueueHandle_t lmicEventQueue = nullptr;
     static TTNWaitingReason waitingReason = eWaitingNone;
-    static TtnProvisioning provisioning;
 
     #if LMIC_ENABLE_event_logging
     static LorawanLogging* logging;

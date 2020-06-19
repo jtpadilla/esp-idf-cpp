@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ttn.h"
+#include "Lorawan.h"
 
 namespace sc::lorawan
 {
@@ -8,7 +8,7 @@ namespace sc::lorawan
     class ILorawanTaskFactory
     {
         public:
-            virtual void createAndLaunch(Ttn& ttn) = 0;
+            virtual void createAndLaunch(Lorawan& lorawan) = 0;
     };
 
 }

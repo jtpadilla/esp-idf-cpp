@@ -4,11 +4,6 @@
 #include <stdint.h>
 #include "driver/spi_master.h"
 
-/**
- * @brief Constant for indicating that a pin is not connected
- */
-#define TTN_NOT_CONNECTED 0xff
-
 namespace sc::lorawan
 {
 

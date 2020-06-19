@@ -3,8 +3,12 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "esp_event.h"
-#include "nvs_flash.h"
-#include "TtnDriver.h"
+#include "TtnLauncher.h"
+
+/**
+ * @brief Constant for indicating that a pin is not connected
+ */
+#define TTN_NOT_CONNECTED 0xff
 
 // Pins PARA TTGO T-Beam 
 #define TTN_SPI_HOST      HSPI_HOST
@@ -23,7 +27,7 @@ const unsigned JOIN_RETRY_INTERVAL = 30;
 namespace sc::lorawan
 {
 
-    LorawanDriver::LorawanDriver(const LorawanParameter& lorawanParameterArg):
+    LorawanLauncher::LorawanLauncher(const LorawanParameter& lorawanParameterArg):
         lorawanParameter {lorawanParameterArg}
     {
 
@@ -31,10 +35,6 @@ namespace sc::lorawan
         
         // Initialize the GPIO ISR handler service
         err = gpio_install_isr_service(ESP_INTR_FLAG_IRAM);
-        ESP_ERROR_CHECK(err);
-
-        // Initialize the NVS (non-volatile storage) for saving and restoring the keys
-        err = nvs_flash_init();
         ESP_ERROR_CHECK(err);
 
         // Initialize SPI bus
@@ -56,7 +56,7 @@ namespace sc::lorawan
 
     }
 
-    void LorawanDriver::connect(ITtnTaskFactory& ttnTaskFacyoty) {
+    void LorawanLauncher::connect(ITtnTaskFactory& ttnTaskFactory) {
 
         // Se intenta el join de forma indefinida
         while (!ttn.join()) {
@@ -66,7 +66,7 @@ namespace sc::lorawan
 
         // Ya estamo en la red, podemos empezar
         printf("Joined!\n");
-        ttnTaskFacyoty.createAndLaunch(ttn);
+        ttnTaskFactory.createAndLaunch(ttn);
 
     }
 

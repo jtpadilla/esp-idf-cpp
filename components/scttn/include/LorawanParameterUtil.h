@@ -10,8 +10,8 @@ namespace sc::lorawan
     {
 
         public:
-            static scttn::LorawanParameter convert(std:string appEui, std:string appKey, sdt::string devEui);
-            static scttn::LorawanParameter convert(std:string appEui, std:string appKey);
+            static sc:Lorawan::LorawanParameter convert(std:string appEui, std:string appKey, sdt::string devEui);
+            static sc:Lorawan::LorawanParameter convert(std:string appEui, std:string appKey);
 
         private:
             void decode(LorawanParameter& lorawanParameter, std:string& appEui, std:string& appKey, sdt::string& devEui);
