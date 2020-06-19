@@ -13,7 +13,7 @@ class ExampleLorawanTaskFactory: public sc::lorawan::ILorawanTaskFactory {
             }
         }
 
-        virtual void createAndLaunch(sc::lorawan::LorawanDriver& lorawanDriver)
+        virtual void createAndLaunch(sc::lorawan::LorawanDriver *lorawanDriver)
         {
             task = new ExampleLorawanTask(lorawanDriver);
             task->launch();

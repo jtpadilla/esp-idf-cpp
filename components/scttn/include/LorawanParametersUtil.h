@@ -2,6 +2,7 @@
 
 #include <string>
 #include "LorawanParameters.h"
+#include "LorawanParametersException.h"
 
 namespace sc::lorawan
 {

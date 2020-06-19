@@ -6,13 +6,13 @@
 namespace sc::lorawan
 {
     
-    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey, std::string& devEui) {
+    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::strin& appKey, std::string devEui) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, devEui);
         return lorawanParameters;
     }
 
-    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey) {
+    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, nullptr);
         return lorawanParameters;
@@ -26,7 +26,7 @@ namespace sc::lorawan
             uint8_t buf_app_eui[8];
             if (appEui.size(appEui) != 16 || !hexStrToBin(appEui.c_str(), buf_app_eui, 8))
             {
-                throw LorawanParametersException{"Invalid application EUI: " + appEui}
+                throw sc::lorawan::LorawanParametersException{"Invalid application EUI: " + appEui}
             }
             swapBytes(buf_app_eui, 8);
             std::memcpy(&lorawanParameters.appEui, buf_app_eui, sizeof(lorawanParameters.appEui));
@@ -37,7 +37,7 @@ namespace sc::lorawan
             uint8_t buf_app_key[16];
             if (appKey.size() != 32 || !hexStrToBin(appKey.c_str(), buf_app_key, 16))
             {
-                throw LorawanParametersException{"Invalid application key: " + appKey}
+                throw sc::lorawan::LorawanParametersException{"Invalid application key: " + appKey}
             }
             std::memcpy(&lorawanParameters.appKey, buf_app_key, sizeof(lorawanParameters.appKey));
         }
@@ -48,7 +48,7 @@ namespace sc::lorawan
             if (devEui) {
                 if (devEui.size() != 16 || !hexStrToBin(devEui.c_str(), buf_dev_eui, 8))
                 {
-                    throw LorawanParametersException{"Invalid device EUI: " + devEui}
+                    throw sc::lorawan::LorawanParametersException{"Invalid device EUI: " + devEui}
                     ESP_LOGW(TAG, "Invalid device EUI: %s", dev_eui);
                     return false;
                 }
