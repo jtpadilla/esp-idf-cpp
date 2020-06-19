@@ -18,8 +18,8 @@ void ExampleLorawanTask::launch() {
 
     while (1) {
         printf("Sending message...\n");
-        sc::lorawan::LorawanDriver::LorawanResponseCode res = lorawanDriver->transmitMessage(msgData, sizeof(msgData) - 1);
-        printf(res == kTTNSuccessfulTransmission ? "Message sent.\n" : "Transmission failed.\n");
+        sc::lorawan::LorawanResponseCode res = lorawanDriver->transmitMessage(msgData, sizeof(msgData) - 1);
+        printf(res == sc::lorawan::LorawanResponseCode.kTTNSuccessfulTransmission ? "Message sent.\n" : "Transmission failed.\n");
 
         vTaskDelay(TX_INTERVAL * 1000 / portTICK_PERIOD_MS);
     }

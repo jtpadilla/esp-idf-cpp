@@ -13,6 +13,6 @@ namespace sc::lorawan
             {
             }
 
-    }
+    };
 
 }
