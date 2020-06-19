@@ -250,7 +250,7 @@ namespace sc::lorawan
         }
     }
 
-    void Lorawan::onMessage(TTNMessageCallback callback)
+    void Lorawan::onMessage(LorawanMessageCallback callback)
     {
         messageCallback = callback;
     }

@@ -27,7 +27,7 @@ namespace sc::lorawan
      * @param length   number of received bytes
      * @param port     port the message was received on
      */
-    typedef void (*TTNMessageCallback)(const uint8_t* payload, size_t length, port_t port);
+    typedef void (*lorawanMessageCallback)(const uint8_t* payload, size_t length, port_t port);
 
     /**
      * @brief Lorawan device
@@ -192,7 +192,7 @@ namespace sc::lorawan
              * 
              * @param callback  the callback function
              */
-            void onMessage(TTNMessageCallback callback);
+            void onMessage(LorawanMessageCallback callback);
 
             /**
              * @brief Sets the RSSI calibration value for LBT (Listen Before Talk).
@@ -206,7 +206,7 @@ namespace sc::lorawan
             void setRSSICal(int8_t rssiCal);
 
         private:
-            TTNMessageCallback messageCallback;
+            LorawanMessageCallback messageCallback;
             bool joinCore();
 
     };
