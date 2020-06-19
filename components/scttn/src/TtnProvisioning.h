@@ -1,24 +1,18 @@
 #pragma once
 
-#include "lmic/oslmic.h"
-#include "nvs_flash.h"
-
-
 class TtnProvisioning
 {
     public:
-        TtnProvisioning();
-
-        bool haveKeys();
-        bool decodeKeys(const char *dev_eui, const char *app_eui, const char *app_key);
-        bool fromMAC(const char *app_eui, const char *app_key);
-        bool saveKeys();
-        bool restoreKeys(bool silent);
+        TtnProvisioning(const char *dev_eui, const char *app_eui, const char *app_key);
+        TtnProvisioning(const char *app_eui, const char *app_key);
+        TtnProvisioning(uint8_t devEuiParam[8], uint8_t appEuiParam[8], uint8_t appKeyParam[16]);
 
     private:
         bool decode(bool incl_dev_eui, const char *dev_eui, const char *app_eui, const char *app_key);
-        bool readNvsValue(nvs_handle handle, const char* key, uint8_t* data, size_t expected_length, bool silent);
-        bool writeNvsValue(nvs_handle handle, const char* key, const uint8_t* data, size_t len);
+
+        uint8_t devEui[8];
+        uint8_t appEui[8];
+        uint8_t appKey[16];
 
         static bool hexStrToBin(const char *hex, uint8_t *buf, int len);
         static int hexTupleToByte(const char *hex);
@@ -27,9 +21,6 @@ class TtnProvisioning
         static char valToHexDigit(int val);
         static void swapBytes(uint8_t* buf, int len);
         static bool isAllZeros(const uint8_t* buf, int len);
-
-    private:
-        bool have_keys = false;
 
 };
 

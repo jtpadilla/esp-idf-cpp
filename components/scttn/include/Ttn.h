@@ -208,15 +208,6 @@ public:
     void onMessage(TTNMessageCallback callback);
 
     /**
-     * @brief Checks if device EUI, app EUI and app key have been stored in non-volatile storage
-     * or have been provided as by a call to 'join(const char*, const char*, const char*)'.
-     * 
-     * @return true   if they are stored, complete and of the correct size
-     * @return false  otherwise
-     */
-    bool isProvisioned();
-
-    /**
      * @brief Sets the RSSI calibration value for LBT (Listen Before Talk).
      * 
      * This value is added to RSSI measured prior to decision. It must include the guardband.

@@ -117,7 +117,6 @@ bool Ttn::provision(const char *devEui, const char *appEui, const char *appKey)
     if (!provisioning.decodeKeys(devEui, appEui, appKey))
         return false;
     
-    return provisioning.saveKeys();
 }
 
 bool Ttn::provisionWithMAC(const char *appEui, const char *appKey)
@@ -125,7 +124,6 @@ bool Ttn::provisionWithMAC(const char *appEui, const char *appKey)
     if (!provisioning.fromMAC(appEui, appKey))
         return false;
     
-    return provisioning.saveKeys();
 }
 
 
@@ -170,23 +168,11 @@ bool Ttn::join(const char *devEui, const char *appEui, const char *appKey)
 
 bool Ttn::join()
 {
-    if (!provisioning.haveKeys())
-    {
-        if (!provisioning.restoreKeys(false))
-            return false;
-    }
-
     return joinCore();
 }
 
 bool Ttn::joinCore()
 {
-    if (!provisioning.haveKeys())
-    {
-        ESP_LOGW(TAG, "Device EUI, App EUI and/or App key have not been provided");
-        return false;
-    }
-
     ttn_hal.enterCriticalSection();
     waitingReason = eWaitingForJoin;
     LMIC_startJoining();
@@ -241,17 +227,6 @@ TTNResponseCode Ttn::transmitMessage(const uint8_t *payload, size_t length, port
 void Ttn::onMessage(TTNMessageCallback callback)
 {
     messageCallback = callback;
-}
-
-
-bool Ttn::isProvisioned()
-{
-    if (provisioning.haveKeys())
-        return true;
-    
-    provisioning.restoreKeys(true);
-
-    return provisioning.haveKeys();
 }
 
 void Ttn::setRSSICal(int8_t rssiCal)

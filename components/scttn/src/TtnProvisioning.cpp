@@ -1,21 +1,5 @@
-/*******************************************************************************
- * 
- * ttn-esp32 - The Things Network device library for ESP-IDF / SX127x
- * 
- * Copyright (c) 2018-2019 Manuel Bleichenbacher
- * 
- * Licensed under MIT License
- * https://opensource.org/licenses/MIT
- *
- * Task listening on a UART port for provisioning commands.
- *******************************************************************************/
 
-#include "freertos/FreeRTOS.h"
-#include "driver/uart.h"
-#include "esp_event.h"
 #include "esp_log.h"
-#include "esp_system.h"
-#include "nvs_flash.h"
 #include "TtnProvisioning.h"
 #include "lmic/lmic.h"
 #include "hal/hal_esp32.h"
@@ -121,145 +105,20 @@ bool TtnProvisioning::decode(bool incl_dev_eui, const char *dev_eui, const char 
         return false;
     }
 
-    if (incl_dev_eui)
+    if (incl_dev_eui) {
         memcpy(global_dev_eui, buf_dev_eui, sizeof(global_dev_eui));
+    }
+
     memcpy(global_app_eui, buf_app_eui, sizeof(global_app_eui));
     memcpy(global_app_key, buf_app_key, sizeof(global_app_key));
 
-    have_keys = !isAllZeros(global_dev_eui, sizeof(global_dev_eui))
-        && !isAllZeros(global_app_eui, sizeof(global_app_eui))
-        && !isAllZeros(global_app_key, sizeof(global_app_key));
+        have_keys = !isAllZeros(global_dev_eui, sizeof(global_dev_eui))
+            && !isAllZeros(global_app_eui, sizeof(global_app_eui))
+            && !isAllZeros(global_app_key, sizeof(global_app_key));
 
-    if (!saveKeys())
-        return false;
-    
     return true;
 }
 
-
-// --- Non-volatile storage
-
-bool TtnProvisioning::saveKeys()
-{
-    bool result = false;
-
-    nvs_handle handle = 0;
-    esp_err_t res = nvs_open(NVS_FLASH_PARTITION, NVS_READWRITE, &handle);
-    if (res == ESP_ERR_NVS_NOT_INITIALIZED)
-    {
-        ESP_LOGW(TAG, "NVS storage is not initialized. Call 'nvs_flash_init()' first.");
-        goto done;
-    }
-    ESP_ERROR_CHECK(res);
-    if (res != ESP_OK)
-        goto done;
-
-    if (!writeNvsValue(handle, NVS_FLASH_KEY_DEV_EUI, global_dev_eui, sizeof(global_dev_eui)))
-        goto done;
-        
-    if (!writeNvsValue(handle, NVS_FLASH_KEY_APP_EUI, global_app_eui, sizeof(global_app_eui)))
-        goto done;
-        
-    if (!writeNvsValue(handle, NVS_FLASH_KEY_APP_KEY, global_app_key, sizeof(global_app_key)))
-        goto done;
-
-    res = nvs_commit(handle);
-    ESP_ERROR_CHECK(res);
-    
-    result = true;
-    ESP_LOGI(TAG, "Dev and app EUI and app key saved in NVS storage");
-
-done:
-    nvs_close(handle);
-    return result;
-}
-
-bool TtnProvisioning::restoreKeys(bool silent)
-{
-    uint8_t buf_dev_eui[8];
-    uint8_t buf_app_eui[8];
-    uint8_t buf_app_key[16];
-    
-    nvs_handle handle = 0;
-    esp_err_t res = nvs_open(NVS_FLASH_PARTITION, NVS_READONLY, &handle);
-    if (res == ESP_ERR_NVS_NOT_FOUND)
-        return false; // partition does not exist yet
-    if (res == ESP_ERR_NVS_NOT_INITIALIZED)
-    {
-        ESP_LOGW(TAG, "NVS storage is not initialized. Call 'nvs_flash_init()' first.");
-        goto done;
-    }
-    ESP_ERROR_CHECK(res);
-    if (res != ESP_OK)
-        goto done;
-
-    if (!readNvsValue(handle, NVS_FLASH_KEY_DEV_EUI, buf_dev_eui, sizeof(global_dev_eui), silent))
-        goto done;
-
-    if (!readNvsValue(handle, NVS_FLASH_KEY_APP_EUI, buf_app_eui, sizeof(global_app_eui), silent))
-        goto done;
-
-    if (!readNvsValue(handle, NVS_FLASH_KEY_APP_KEY, buf_app_key, sizeof(global_app_key), silent))
-        goto done;
-
-    memcpy(global_dev_eui, buf_dev_eui, sizeof(global_dev_eui));
-    memcpy(global_app_eui, buf_app_eui, sizeof(global_app_eui));
-    memcpy(global_app_key, buf_app_key, sizeof(global_app_key));
-
-    have_keys = !isAllZeros(global_dev_eui, sizeof(global_dev_eui))
-        && !isAllZeros(global_app_eui, sizeof(global_app_eui))
-        && !isAllZeros(global_app_key, sizeof(global_app_key));
-
-    if (have_keys)
-    {
-       ESP_LOGI(TAG, "Dev and app EUI and app key have been restored from NVS storage");
-    }
-    else
-    {
-        ESP_LOGW(TAG, "Dev and app EUI and app key are invalid (zeroes only)");
-    }
-
-done:
-    nvs_close(handle);
-    return true;
-}
-
-bool TtnProvisioning::readNvsValue(nvs_handle handle, const char* key, uint8_t* data, size_t expected_length, bool silent)
-{
-    size_t size = expected_length;
-    esp_err_t res = nvs_get_blob(handle, key, data, &size);
-    if (res == ESP_OK && size == expected_length)
-        return true;
-
-    if (res == ESP_OK && size != expected_length)
-    {
-        if (!silent)
-            ESP_LOGW(TAG, "Invalid size of NVS data for %s", key);
-        return false;
-    }
-
-    if (res == ESP_ERR_NVS_NOT_FOUND)
-    {
-        if (!silent)
-            ESP_LOGW(TAG, "No NVS data found for %s", key);
-        return false;
-    }
-    
-    ESP_ERROR_CHECK(res);
-    return false;
-}
-
-bool TtnProvisioning::writeNvsValue(nvs_handle handle, const char* key, const uint8_t* data, size_t len)
-{
-    uint8_t buf[16];
-    if (readNvsValue(handle, key, buf, len, true) && memcmp(buf, data, len) == 0)
-        return true; // unchanged
-    
-    esp_err_t res = nvs_set_blob(handle, key, data, len);
-    ESP_ERROR_CHECK(res);
-
-    return res == ESP_OK;
-}
 
 
 // --- Helper functions ---
