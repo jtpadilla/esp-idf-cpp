@@ -11,20 +11,20 @@ namespace scttn
 
         public:
 
-            LorawanParameterException(String msgParam):
-                msg {param}
-
+            LorawanParameterException(std::string msgParam):
+                msg {msgParam}
             {
             }
 
             virtual const char* what() const throw()
             {
-                return param.c_string();
+                return msg.c_str();
             }
 
         private:
-            string msg;
-    }
+            std::string msg;
+            
+    };
 
 
 }

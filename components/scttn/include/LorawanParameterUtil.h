@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "LorawanParameter.h"
 
 namespace scttn
 {
@@ -9,10 +10,13 @@ namespace scttn
     {
 
         public:
-            static scttn::LorawanParameter convert(const char devEuiParam[], const char appEuiParam[], const char appKeyParam[]);
-            static scttn::LorawanParameter convert(const char appEuiParam[], const char appKeyParam[]);
+            static scttn::LorawanParameter convert(std:string appEui, std:string appKey, sdt::string devEui);
+            static scttn::LorawanParameter convert(std:string appEui, std:string appKey);
 
         private:
+            void decode(LorawanParameter& lorawanParameter, std:string& appEui, std:string& appKey, sdt::string& devEui);
+            void putMAC(LorawanParameter& lorawanParameter);
+
             static bool hexStrToBin(const char *hex, uint8_t *buf, int len);
             static int hexTupleToByte(const char *hex);
             static int hexDigitToVal(char ch);
