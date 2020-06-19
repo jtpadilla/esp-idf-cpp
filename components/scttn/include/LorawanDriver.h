@@ -27,7 +27,7 @@ namespace sc::lorawan
      * @param length   number of received bytes
      * @param port     port the message was received on
      */
-    typedef void (*lorawanMessageCallback)(const uint8_t* payload, size_t length, port_t port);
+    typedef void (*LorawanMessageCallback)(const uint8_t* payload, size_t length, port_t port);
 
     /**
      * @brief Lorawan device
