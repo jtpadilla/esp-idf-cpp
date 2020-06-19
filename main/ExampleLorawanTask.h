@@ -10,9 +10,6 @@ class ExampleLorawanTask {
 
     private:
         LorawanDriver *lorawanDriver;
-
-        void txTask(void* pvParameter);
         void messageReceived(const uint8_t* message, size_t length, port_t port);
-
 
 };

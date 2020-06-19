@@ -6,7 +6,7 @@
 #include "hal/hal_esp32.h"
 #include "lmic/lmic.h"
 
-#include "Lorawan.h"
+#include "LorawanDriver.h"
 #include "LorawanLogging.h"
 
 namespace sc::lorawan

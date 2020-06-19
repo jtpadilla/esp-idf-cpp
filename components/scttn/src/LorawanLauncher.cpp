@@ -3,7 +3,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "esp_event.h"
-#include "TtnLauncher.h"
+#include "LorawanLauncher.h"
 
 /**
  * @brief Constant for indicating that a pin is not connected
@@ -27,10 +27,9 @@ const unsigned JOIN_RETRY_INTERVAL = 30;
 namespace sc::lorawan
 {
 
-    LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameter& lorawanParameter):
-        lorawanParameter {lorawanParameterArg}
+    LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters):
     {
-        lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameter);
+        lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameters);
     }
 
     LorawanLauncher::~LorawanLauncher()

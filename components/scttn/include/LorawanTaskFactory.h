@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lorawan.h"
+#include "LorawanDriver.h"
 
 namespace sc::lorawan
 {
@@ -8,7 +8,8 @@ namespace sc::lorawan
     class ILorawanTaskFactory
     {
         public:
-            virtual void createAndLaunch(Lorawan& lorawan) = 0;
+            virtual ~ILorawanTaskFactory() = 0;
+            virtual void createAndLaunch(LorawanDriver& lorawanDriver) = 0;
     };
 
 }

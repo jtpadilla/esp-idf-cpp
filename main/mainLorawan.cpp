@@ -1,8 +1,9 @@
 
 #include "string"
 
-#include "TtnParameters.h"
-#include "TtnDriver.h"
+#include "LorawanParameters.h"
+#include "LorawanDriver.h"
+#include "LorawanLauncher.h"
 
 #include "ExampleTtnTaskFactory.h"
 

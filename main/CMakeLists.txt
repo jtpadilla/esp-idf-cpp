@@ -1,12 +1,12 @@
 idf_component_register(
     SRCS 
         "mainFreeRtos.cpp" 
-        "mainTtn.cpp" 
+        "mainLorawan.cpp" 
         "main.cpp" 
 
-        "ExampleTtnTaskFactory.h"
-        "ExampleTtnTask.h"
-        "ExampleTtnTask.cpp"
+        "ExampleLorawanTaskFactory.h"
+        "ExampleLorawanTask.h"
+        "ExampleLorawanTask.cpp"
 
     REQUIRES scfreertos scsystem scttn
 )

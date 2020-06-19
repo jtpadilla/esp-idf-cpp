@@ -13,22 +13,9 @@ void ExampleLorawanTask::launch() {
 
     printf("start: ExampleLorawanTask::launch(...)\n");      
 
-    // Se instala el listener de los mensajes desde la red
-    //ttn.onMessage(messageReceived);
+    const unsigned TX_INTERVAL = 30;
+    uint8_t msgData[] = "Hello, world";
 
-    // Se instalar la tarea que se encarga de transmitir los mensakes hacia la red  
-    //TaskFunction_t t = static_cast<TaskFunction_t>(txTask);
-    //xTaskCreate(t, "send_messages", 1024 * 4, (void* )0, 3, nullptr);
-
-    txTask(nullptr);
-
-}
-
-const unsigned TX_INTERVAL = 30;
-static uint8_t msgData[] = "Hello, world";
-
-void ExampleLorawanTask::txTask(void* pvParameter)
-{
     while (1) {
         printf("Sending message...\n");
         TTNResponseCode res = lorawanDriver->transmitMessage(msgData, sizeof(msgData) - 1);
@@ -36,7 +23,9 @@ void ExampleLorawanTask::txTask(void* pvParameter)
 
         vTaskDelay(TX_INTERVAL * 1000 / portTICK_PERIOD_MS);
     }
+
 }
+
 
 void ExampleLorawanTask::messageReceived(const uint8_t* message, size_t length, port_t port)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lorawan.h"
-#include "LorawanParameter.h"
+#include "LorawanDriver.h"
+#include "LorawanParameters.h"
 #include "LorawanTaskFactory.h"
 
 namespace sc::lorawan
@@ -11,7 +11,7 @@ namespace sc::lorawan
     {
 
         public:
-            LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameter& lorawanParameter);
+            LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters);
             ~LorawanLauncher();
             
             void connect(ILorawanTaskFactory& lorawanTaskFactoryArg);
