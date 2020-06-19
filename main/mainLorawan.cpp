@@ -5,7 +5,7 @@
 #include "LorawanDriver.h"
 #include "LorawanLauncher.h"
 
-#include "ExampleTtnTaskFactory.h"
+#include "ExampleLorawanTaskFactory.h"
 
 constexpr char devEui[] = "004CFEED74AD2FA6";
 constexpr char appEui[] = "70B3D57ED00306F7";

@@ -50,7 +50,7 @@ namespace sc::lorawan
 
     static const char *TAG = "ttn";
 
-    static Ttn* ttnInstance;
+    static LorawanDriver* ttnInstance;
     static QueueHandle_t lmicEventQueue = nullptr;
     static TTNWaitingReason waitingReason = eWaitingNone;
 
@@ -89,7 +89,7 @@ namespace sc::lorawan
 
 
 
-    Lorawan::Lorawan()
+    LorawanDriver::LorawanDriver()
         : messageCallback(nullptr)
     {
     #if defined(TTN_IS_DISABLED)
@@ -102,12 +102,12 @@ namespace sc::lorawan
         ttn_hal.initCriticalSection();
     }
 
-    Lorawan::~Lorawan()
+    LorawanDriver::~LorawanDriver()
     {
         // nothing to do
     }
 
-    void Lorawan::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
+    void LorawanDriver::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
     {
         ttn_hal.configurePins(spi_host, nss, rxtx, rst, dio0, dio1);
 
@@ -126,7 +126,7 @@ namespace sc::lorawan
         ttn_hal.startLMICTask();
     }
 
-    void Lorawan::reset()
+    void LorawanDriver::reset()
     {
         ttn_hal.enterCriticalSection();
         LMIC_reset();
@@ -138,14 +138,14 @@ namespace sc::lorawan
         ttn_hal.leaveCriticalSection();
     }
 
-    bool Lorawan::provision(const char *devEui, const char *appEui, const char *appKey)
+    bool LorawanDriver::provision(const char *devEui, const char *appEui, const char *appKey)
     {
         if (!provisioning.decodeKeys(devEui, appEui, appKey))
             return false;
         
     }
 
-    bool Lorawan::provisionWithMAC(const char *appEui, const char *appKey)
+    bool LorawanDriver::provisionWithMAC(const char *appEui, const char *appKey)
     {
         if (!provisioning.fromMAC(appEui, appKey))
             return false;
@@ -153,7 +153,7 @@ namespace sc::lorawan
     }
 
 
-    void Lorawan::startProvisioningTask()
+    void LorawanDriver::startProvisioningTask()
     {
     #if defined(TTN_HAS_AT_COMMANDS)
         provisioning.startTask();
@@ -164,7 +164,7 @@ namespace sc::lorawan
     #endif
     }
 
-    void Lorawan::waitForProvisioning()
+    void LorawanDriver::waitForProvisioning()
     {
     #if defined(TTN_HAS_AT_COMMANDS)
         if (isProvisioned())
@@ -184,7 +184,7 @@ namespace sc::lorawan
     #endif
     }
 
-    bool Lorawan::join(const char *devEui, const char *appEui, const char *appKey)
+    bool LorawanDriver::join(const char *devEui, const char *appEui, const char *appKey)
     {
         if (!provisioning.decodeKeys(devEui, appEui, appKey))
             return false;
@@ -192,12 +192,12 @@ namespace sc::lorawan
         return joinCore();
     }
 
-    bool Lorawan::join()
+    bool LorawanDriver::join()
     {
         return joinCore();
     }
 
-    bool Lorawan::joinCore()
+    bool LorawanDriver::joinCore()
     {
         ttn_hal.enterCriticalSection();
         waitingReason = eWaitingForJoin;
@@ -210,7 +210,7 @@ namespace sc::lorawan
         return event.event == eEvtJoinCompleted;
     }
 
-    LorawanResponseCode Lorawan::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
+    LorawanResponseCode LorawanDriver::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
     {
         ttn_hal.enterCriticalSection();
         if (waitingReason != eWaitingNone || (LMIC.opmode & OP_TXRXPEND) != 0)
@@ -250,12 +250,12 @@ namespace sc::lorawan
         }
     }
 
-    void Lorawan::onMessage(LorawanMessageCallback callback)
+    void LorawanDriver::onMessage(LorawanMessageCallback callback)
     {
         messageCallback = callback;
     }
 
-    void Lorawan::setRSSICal(int8_t rssiCal)
+    void LorawanDriver::setRSSICal(int8_t rssiCal)
     {
         ttn_hal.rssiCal = rssiCal;
     }

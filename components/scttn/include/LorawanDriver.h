@@ -4,10 +4,10 @@
 #include <stdint.h>
 #include "driver/spi_master.h"
 
+typedef uint8_t port_t;
+
 namespace sc::lorawan
 {
-
-    typedef uint8_t port_t;
 
     /**
      * @brief Response codes

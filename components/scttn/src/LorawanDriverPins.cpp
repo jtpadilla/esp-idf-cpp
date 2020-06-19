@@ -5,7 +5,7 @@ namespace sc::lorawan
 {
 
     LorawanDriverPins::LorawanDriverPins(
-                spi_host_device_t spi_host_arg
+                spi_host_device_t spi_host_arg,
                 uint8_t spi_dma_chan_arg,
                 uint8_t pin_spi_sclk_arg,
                 uint8_t pin_spi_mosi_arg,
@@ -23,7 +23,7 @@ namespace sc::lorawan
                 pin_nss {pin_nss_arg},
                 pin_rxtx {pin_rxtx_arg},
                 pin_rst {pin_rst_arg},
-                pin_di00 {pin_di00_arg}
+                pin_di00 {pin_di00_arg},
                 pin_di01 {pin_di01_arg}
     {
 
@@ -46,43 +46,43 @@ namespace sc::lorawan
 
     }
 
-    const spi_host_device_t LorawanDriverPins::get_spi_host() const {
+    spi_host_device_t LorawanDriverPins::get_spi_host() const {
         return spi_host;
     }
 
-    const uint8_t LorawanDriverPins::get_spi_dma_chan() const {
+    uint8_t LorawanDriverPins::get_spi_dma_chan() const {
         return spi_dma_chan;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_spi_sclk() const {
+    uint8_t LorawanDriverPins::get_pin_spi_sclk() const {
         return pin_spi_sclk;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_spi_mosi() const {
+    uint8_t LorawanDriverPins::get_pin_spi_mosi() const {
         return pin_spi_mosi;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_spi_miso() const {
+    uint8_t LorawanDriverPins::get_pin_spi_miso() const {
         return pin_spi_miso;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_nss() const {
+    uint8_t LorawanDriverPins::get_pin_nss() const {
         return pin_nss;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_rxtx() const {
+    uint8_t LorawanDriverPins::get_pin_rxtx() const {
         return pin_rxtx;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_rst() const {
+    uint8_t LorawanDriverPins::get_pin_rst() const {
         return pin_rst;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_di00() const {
+    uint8_t LorawanDriverPins::get_pin_di00() const {
         return pin_di00;
     }
 
-    const uint8_t LorawanDriverPins::get_pin_di01() const {
+    uint8_t LorawanDriverPins::get_pin_di01() const {
         return pin_di01;
     }
 

@@ -1,24 +1,24 @@
 
 #include "esp_log.h"
 
-#include "LorawanParameterUtil.h"
+#include "LorawanParametersUtil.h"
 
 namespace sc::lorawan
 {
     
-    LorawanParameters LorawanParametersUtil::convert(std:string& appEui, std:string& appKey, sdt::string& devEui) {
+    LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey, sdt::string& devEui) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, devEui);
         return lorawanParameters;
     }
 
-    LorawanParameters LorawanParametersUtil::convert(std:string& appEui, std:string& appKey) {
+    LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, nullptr);
         return lorawanParameters;
     }
 
-    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std:string& appEui, std:string& appKey, sdt::string& devEui)
+    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, sdt::string& devEui)
     {
 
         // appEui

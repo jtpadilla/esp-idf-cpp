@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LorawanDriver.h"
+#include "LorawanDriverPins.h"
 #include "LorawanParameters.h"
 #include "LorawanTaskFactory.h"
 

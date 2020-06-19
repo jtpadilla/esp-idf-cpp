@@ -5,11 +5,11 @@
 class ExampleLorawanTask {
 
     public:
-        ExampleLorawanTask(LorawanDriver *lorawanDriver);
+        ExampleLorawanTask(sc::lorawan::LorawanDriver *lorawanDriver);
         void launch();
 
     private:
-        LorawanDriver *lorawanDriver;
+        sc::lorawan::LorawanDriver *lorawanDriver;
         void messageReceived(const uint8_t* message, size_t length, port_t port);
 
 };
