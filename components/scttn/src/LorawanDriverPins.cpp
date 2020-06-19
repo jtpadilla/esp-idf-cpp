@@ -1,5 +1,6 @@
 
 #include "LorawanDriverPins.h"
+#include "esp_event.h"
 
 namespace sc::lorawan
 {
