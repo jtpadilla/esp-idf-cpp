@@ -6,19 +6,19 @@
 namespace sc::lorawan
 {
     
-    LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey, sdt::string& devEui) {
+    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey, std::string& devEui) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, devEui);
         return lorawanParameters;
     }
 
-    LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey) {
+    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string& appEui, std::string& appKey) {
         LorawanParameters lorawanParameters{};
         decode(lorawanParameters, appEui, appKey, nullptr);
         return lorawanParameters;
     }
 
-    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, sdt::string& devEui)
+    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, std::string& devEui)
     {
 
         // appEui

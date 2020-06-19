@@ -27,9 +27,10 @@ const unsigned JOIN_RETRY_INTERVAL = 30;
 namespace sc::lorawan
 {
 
-    LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters):
+    LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters)
     {
-        lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameters);
+        //lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameters);
+        lorawanDriver = nullptr;
     }
 
     LorawanLauncher::~LorawanLauncher()
@@ -37,7 +38,7 @@ namespace sc::lorawan
         delete lorawanDriver;
     }
 
-    void LorawanLauncher::connect(ITtnTaskFactory& ttnTaskFactory) {
+    void LorawanLauncher::connect(ILorawanTaskFactory& lorawanTaskFactory) {
 
         // Se intenta el join de forma indefinida
         while (!lorawanDriver->join()) {
@@ -47,7 +48,7 @@ namespace sc::lorawan
 
         // Ya estamo en la red, podemos empezar
         printf("Joined!\n");
-        ttnTaskFactory.createAndLaunch(lorawanDriver);
+        lorawanTaskFactory.createAndLaunch(lorawanDriver);
 
     }
 
