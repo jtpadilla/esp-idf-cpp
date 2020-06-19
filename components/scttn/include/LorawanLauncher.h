@@ -11,12 +11,13 @@ namespace sc::lorawan
     {
 
         public:
-            LorawanLauncher(const LorawanParameter& lorawanParameterArg);
+            LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameter& lorawanParameter);
+            ~LorawanLauncher();
+            
             void connect(ILorawanTaskFactory& lorawanTaskFactoryArg);
 
         private:
-            LorawanParameter lorawanParameter;
-            Lorawan lorawan;
+            LorawanDriver *lorawanDriver;
 
     };
 

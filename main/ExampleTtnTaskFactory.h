@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Ttn.h"
-#include "ExampleTtnTask.h"
+#include "LorawanDriver.h"
+#include "ExampleLorawanTask.h"
 
-class ExampleTtnTaskFactory: public scttn::ITtnTaskFactory {
+class ExampleLorawanTaskFactory: public sc::lorawan::ILorawanTaskFactory {
 
     public:
 
-        virtual ~ExampleTtnTaskFactory() {
+        virtual ~ExampleLorawanTaskFactory() {
             if (task) {
                 delete task;
             }
@@ -15,12 +15,12 @@ class ExampleTtnTaskFactory: public scttn::ITtnTaskFactory {
 
         virtual void createAndLaunch(Ttn& ttn)
         {
-            task = new ExampleTtnTask(ttn);
+            task = new ExampleLorawanTask(ttn);
             task->launch();
         }
 
     private:
-        ExampleTtnTask *task;
+        ExampleLorawanTask *task;
 
 };
 

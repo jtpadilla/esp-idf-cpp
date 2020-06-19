@@ -37,7 +37,7 @@ namespace sc::lorawan
      * 
      * Only one instance of this class must be created.
      */
-    class Lorawan
+    class LorawanDriver
     {
 
         public:
@@ -45,15 +45,15 @@ namespace sc::lorawan
             /**
              * @brief Construct a new The Things Network device instance.
              */
-            Lorawan();
+            LorawanDriver();
 
             /**
              * @brief Destroy the The Things Network device instance.
              */
-            ~Lorawan();
+            ~LorawanDriver();
 
             /**
-             * @brief Reset the LoRaWAN radio.
+             * @brief Reset the LorawanDriver radio.
              * 
              * Does not clear provisioned keys.
              */

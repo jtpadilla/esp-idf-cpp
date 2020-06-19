@@ -10,7 +10,6 @@ namespace sc::lorawan
     class LorawanDriverPins
     {
         public:
-
             const spi_host_device_t get_spi_host() const;
             const uint8_t get_spi_dma_chan() const;
             const uint8_t get_pin_spi_sclk() const;
@@ -23,7 +22,6 @@ namespace sc::lorawan
             const uint8_t get_pin_di01() const;
 
         protected:
-
             LorawanDriverPins(
                 spi_host_device_t spi_host_arg
                 uint8_t spi_dma_chan_arg,
@@ -37,7 +35,6 @@ namespace sc::lorawan
                 uint8_t pin_di01_arg);
 
         private:
-
             const spi_host_device_t spi_host;
             const uint8_t spi_dma_chan;
             const uint8_t pin_spi_sclk;

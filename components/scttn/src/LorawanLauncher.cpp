@@ -27,46 +27,28 @@ const unsigned JOIN_RETRY_INTERVAL = 30;
 namespace sc::lorawan
 {
 
-    LorawanLauncher::LorawanLauncher(const LorawanParameter& lorawanParameterArg):
+    LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameter& lorawanParameter):
         lorawanParameter {lorawanParameterArg}
     {
+        lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameter);
+    }
 
-        esp_err_t err;
-        
-        // Initialize the GPIO ISR handler service
-        err = gpio_install_isr_service(ESP_INTR_FLAG_IRAM);
-        ESP_ERROR_CHECK(err);
-
-        // Initialize SPI bus
-        spi_bus_config_t spi_bus_config{};
-        spi_bus_config.miso_io_num = TTN_PIN_SPI_MISO;
-        spi_bus_config.mosi_io_num = TTN_PIN_SPI_MOSI;
-        spi_bus_config.sclk_io_num = TTN_PIN_SPI_SCLK;
-        spi_bus_config.quadwp_io_num = -1;
-        spi_bus_config.quadhd_io_num = -1;
-        spi_bus_config.max_transfer_sz = 0;
-        err = spi_bus_initialize(TTN_SPI_HOST, &spi_bus_config, TTN_SPI_DMA_CHAN);
-        ESP_ERROR_CHECK(err);
-
-        // Configure the SX127x pins
-        ttn.configurePins(TTN_SPI_HOST, TTN_PIN_NSS, TTN_PIN_RXTX, TTN_PIN_RST, TTN_PIN_DIO0, TTN_PIN_DIO1);
-
-        // The below line can be commented after the first run as the data is saved in NVS
-        ttn.provision(lorawanParameter.getDevEui(), ttnParameters.getAppEui(), ttnParameters.getAppKey());
-
+    LorawanLauncher::~LorawanLauncher()
+    {
+        delete lorawanDriver;
     }
 
     void LorawanLauncher::connect(ITtnTaskFactory& ttnTaskFactory) {
 
         // Se intenta el join de forma indefinida
-        while (!ttn.join()) {
+        while (!lorawanDriver->join()) {
             printf("Joining...\n");
             vTaskDelay(JOIN_RETRY_INTERVAL * 1000 / portTICK_PERIOD_MS);
         }
 
         // Ya estamo en la red, podemos empezar
         printf("Joined!\n");
-        ttnTaskFactory.createAndLaunch(ttn);
+        ttnTaskFactory.createAndLaunch(lorawanDriver);
 
     }
 

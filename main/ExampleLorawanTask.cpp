@@ -2,16 +2,16 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "ExampleTtnTask.h"
+#include "ExampleLorawanTask.h"
 
-ExampleTtnTask::ExampleTtnTask(Ttn& ttnParam): 
-    ttn{ttnParam}
+ExampleLorawanTask::ExampleLorawanTask(LorawanDriver *lorawanDriverArg): 
+    lorawanDriver{lorawanDriverArg)}
 {
 }
 
-void ExampleTtnTask::launch() {
+void ExampleLorawanTask::launch() {
 
-    printf("start: TtnExampleTask::launch(...)\n");      
+    printf("start: ExampleLorawanTask::launch(...)\n");      
 
     // Se instala el listener de los mensajes desde la red
     //ttn.onMessage(messageReceived);
@@ -27,18 +27,18 @@ void ExampleTtnTask::launch() {
 const unsigned TX_INTERVAL = 30;
 static uint8_t msgData[] = "Hello, world";
 
-void ExampleTtnTask::txTask(void* pvParameter)
+void ExampleLorawanTask::txTask(void* pvParameter)
 {
     while (1) {
         printf("Sending message...\n");
-        TTNResponseCode res = ttn.transmitMessage(msgData, sizeof(msgData) - 1);
+        TTNResponseCode res = lorawanDriver->transmitMessage(msgData, sizeof(msgData) - 1);
         printf(res == kTTNSuccessfulTransmission ? "Message sent.\n" : "Transmission failed.\n");
 
         vTaskDelay(TX_INTERVAL * 1000 / portTICK_PERIOD_MS);
     }
 }
 
-void ExampleTtnTask::messageReceived(const uint8_t* message, size_t length, port_t port)
+void ExampleLorawanTask::messageReceived(const uint8_t* message, size_t length, port_t port)
 {
     printf("Message of %d bytes received on port %d:", length, port);
     for (int i = 0; i < length; i++)

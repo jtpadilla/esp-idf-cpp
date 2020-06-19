@@ -1,21 +1,21 @@
 #pragma once
 
 #include <string>
-#include "LorawanParameter.h"
+#include "LorawanParameters.h"
 
 namespace sc::lorawan
 {
 
-    class LorawanParameterUtil
+    class LorawanParametersUtil
     {
 
         public:
-            static sc:Lorawan::LorawanParameter convert(std:string appEui, std:string appKey, sdt::string devEui);
-            static sc:Lorawan::LorawanParameter convert(std:string appEui, std:string appKey);
+            static sc:Lorawan::LorawanParameters convert(std:string appEui, std:string appKey, sdt::string devEui);
+            static sc:Lorawan::LorawanParameters convert(std:string appEui, std:string appKey);
 
         private:
-            void decode(LorawanParameter& lorawanParameter, std:string& appEui, std:string& appKey, sdt::string& devEui);
-            void putMAC(LorawanParameter& lorawanParameter);
+            void decode(LorawanParameters& lorawanParameters, std:string& appEui, std:string& appKey, sdt::string& devEui);
+            void putMAC(LorawanParameters& lorawanParameters);
 
             static bool hexStrToBin(const char *hex, uint8_t *buf, int len);
             static int hexTupleToByte(const char *hex);

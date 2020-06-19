@@ -6,19 +6,19 @@
 namespace sc::lorawan
 {
     
-    LorawanParameter LorawanParameterUtil::convert(std:string& appEui, std:string& appKey, sdt::string& devEui) {
-        LorawanParameter lorawanParameter{};
-        decode(lorawanParameter, appEui, appKey, devEui);
-        return lorawanParameter;
+    LorawanParameters LorawanParametersUtil::convert(std:string& appEui, std:string& appKey, sdt::string& devEui) {
+        LorawanParameters lorawanParameters{};
+        decode(lorawanParameters, appEui, appKey, devEui);
+        return lorawanParameters;
     }
 
-    LorawanParameter LorawanParameterUtil::convert(std:string& appEui, std:string& appKey) {
-        LorawanParameter lorawanParameter{};
-        decode(lorawanParameter, appEui, appKey, nullptr);
-        return lorawanParameter;
+    LorawanParameters LorawanParametersUtil::convert(std:string& appEui, std:string& appKey) {
+        LorawanParameters lorawanParameters{};
+        decode(lorawanParameters, appEui, appKey, nullptr);
+        return lorawanParameters;
     }
 
-    void LorawanParameterUtil::decode(LorawanParameter& lorawanParameter, std:string& appEui, std:string& appKey, sdt::string& devEui)
+    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std:string& appEui, std:string& appKey, sdt::string& devEui)
     {
 
         // appEui
@@ -26,10 +26,10 @@ namespace sc::lorawan
             uint8_t buf_app_eui[8];
             if (appEui.size(appEui) != 16 || !hexStrToBin(appEui.c_str(), buf_app_eui, 8))
             {
-                throw LorawanParameterException{"Invalid application EUI: " + appEui}
+                throw LorawanParametersException{"Invalid application EUI: " + appEui}
             }
             swapBytes(buf_app_eui, 8);
-            std::memcpy(&lorawanParameter.appEui, buf_app_eui, sizeof(lorawanParameter.appEui));
+            std::memcpy(&lorawanParameters.appEui, buf_app_eui, sizeof(lorawanParameters.appEui));
         }
 
         // appKey
@@ -37,9 +37,9 @@ namespace sc::lorawan
             uint8_t buf_app_key[16];
             if (appKey.size() != 32 || !hexStrToBin(appKey.c_str(), buf_app_key, 16))
             {
-                throw LorawanParameterException{"Invalid application key: " + appKey}
+                throw LorawanParametersException{"Invalid application key: " + appKey}
             }
-            std::memcpy(&lorawanParameter.appKey, buf_app_key, sizeof(lorawanParameter.appKey));
+            std::memcpy(&lorawanParameters.appKey, buf_app_key, sizeof(lorawanParameters.appKey));
         }
 
         // devEui
@@ -48,7 +48,7 @@ namespace sc::lorawan
             if (devEui) {
                 if (devEui.size() != 16 || !hexStrToBin(devEui.c_str(), buf_dev_eui, 8))
                 {
-                    throw LorawanParameterException{"Invalid device EUI: " + devEui}
+                    throw LorawanParametersException{"Invalid device EUI: " + devEui}
                     ESP_LOGW(TAG, "Invalid device EUI: %s", dev_eui);
                     return false;
                 }
@@ -56,12 +56,12 @@ namespace sc::lorawan
             } else {
                 putMAC(buf_dev_eui);
             }
-            std::memcpy(&lorawanParameter.devEui, buf_dev_eui, sizeof(lorawanParameter.devEui));
+            std::memcpy(&lorawanParameters.devEui, buf_dev_eui, sizeof(lorawanParameters.devEui));
         }
 
     }
 
-    void LorawanParameterUtil::putMAC(uint8_t& buf_dev_eui[8]) {
+    void LorawanParametersUtil::putMAC(uint8_t& buf_dev_eui[8]) {
 
         // Obtiene la MAC del hardware
         uint8_t mac[6];
@@ -80,7 +80,7 @@ namespace sc::lorawan
 
     }
 
-    bool LorawanParameterUtil::hexStrToBin(const char *hex, uint8_t *buf, int len)
+    bool LorawanParametersUtil::hexStrToBin(const char *hex, uint8_t *buf, int len)
     {
         const char* ptr = hex;
         for (int i = 0; i < len; i++)
@@ -94,7 +94,7 @@ namespace sc::lorawan
         return true;
     }
 
-    int LorawanParameterUtil::hexTupleToByte(const char *hex)
+    int LorawanParametersUtil::hexTupleToByte(const char *hex)
     {
         int nibble1 = hexDigitToVal(hex[0]);
         if (nibble1 < 0)
@@ -105,7 +105,7 @@ namespace sc::lorawan
         return (nibble1 << 4) | nibble2;
     }
 
-    int LorawanParameterUtil::hexDigitToVal(char ch)
+    int LorawanParametersUtil::hexDigitToVal(char ch)
     {
         if (ch >= '0' && ch <= '9')
             return ch - '0';
@@ -116,7 +116,7 @@ namespace sc::lorawan
         return -1;
     }
 
-    void LorawanParameterUtil::binToHexStr(const uint8_t* buf, int len, char* hex)
+    void LorawanParametersUtil::binToHexStr(const uint8_t* buf, int len, char* hex)
     {
         for (int i = 0; i < len; i++)
         {
@@ -128,12 +128,12 @@ namespace sc::lorawan
         }
     }
 
-    char LorawanParameterUtil::valToHexDigit(int val)
+    char LorawanParametersUtil::valToHexDigit(int val)
     {
         return "0123456789ABCDEF"[val];
     }
 
-    void LorawanParameterUtil::swapBytes(uint8_t* buf, int len)
+    void LorawanParametersUtil::swapBytes(uint8_t* buf, int len)
     {
         uint8_t* p1 = buf;
         uint8_t* p2 = buf + len - 1;
@@ -147,7 +147,7 @@ namespace sc::lorawan
         }
     }
 
-    bool LorawanParameterUtil::isAllZeros(const uint8_t* buf, int len)
+    bool LorawanParametersUtil::isAllZeros(const uint8_t* buf, int len)
     {
         for (int i = 0; i < len; i++)
             if (buf[i] != 0)

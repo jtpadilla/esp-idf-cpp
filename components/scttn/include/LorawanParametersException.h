@@ -6,12 +6,12 @@
 namespace sc::lorawan
 {
 
-    class LorawanParameterException: public exception
+    class LorawanParametersException: public exception
     {
 
         public:
 
-            LorawanParameterException(std::string msgParam):
+            LorawanParametersException(std::string msgParam):
                 msg {msgParam}
             {
             }

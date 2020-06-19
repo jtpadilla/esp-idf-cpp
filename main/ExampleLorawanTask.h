@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Ttn.h"
+#include "LorawanDriver.h"
 
-class ExampleTtnTask {
+class ExampleLorawanTask {
 
     public:
-        ExampleTtnTask(Ttn& ttn);
+        ExampleLorawanTask(LorawanDriver *lorawanDriver);
         void launch();
 
     private:
-        Ttn ttn;
+        LorawanDriver *lorawanDriver;
 
         void txTask(void* pvParameter);
         void messageReceived(const uint8_t* message, size_t length, port_t port);
