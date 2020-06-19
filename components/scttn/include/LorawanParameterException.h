@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-namespace scttn
+namespace sc::lorawan
 {
 
     class LorawanParameterException: public exception

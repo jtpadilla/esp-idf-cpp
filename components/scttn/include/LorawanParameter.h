@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace scttn
+namespace sc::lorawan
 {
     
     struct LorawanParameter {

@@ -3,7 +3,7 @@
 #include <string>
 #include "LorawanParameter.h"
 
-namespace scttn
+namespace sc::lorawan
 {
 
     class LorawanParameterUtil

@@ -3,7 +3,7 @@
 
 #include "LorawanParameterUtil.h"
 
-namespace scttn
+namespace sc::lorawan
 {
     
     LorawanParameter LorawanParameterUtil::convert(std:string& appEui, std:string& appKey, sdt::string& devEui) {

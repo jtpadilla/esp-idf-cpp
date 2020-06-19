@@ -20,27 +20,24 @@
 
 const unsigned JOIN_RETRY_INTERVAL = 30;
 
-namespace scttn
+namespace sc::lorawan
 {
 
-    TtnDriver::TtnDriver(const TtnParameters& ttnParametersArg):
-        ttnParameters {ttnParametersArg}
+    LorawanDriver::LorawanDriver(const LorawanParameter& lorawanParameterArg):
+        lorawanParameter {lorawanParameterArg}
     {
 
         esp_err_t err;
         
         // Initialize the GPIO ISR handler service
-        printf("TtnDriver::init(): gpio_install_isr_service()\n");
         err = gpio_install_isr_service(ESP_INTR_FLAG_IRAM);
         ESP_ERROR_CHECK(err);
 
         // Initialize the NVS (non-volatile storage) for saving and restoring the keys
-        printf("TtnDriver::init(): nvs_flash_init()\n");
         err = nvs_flash_init();
         ESP_ERROR_CHECK(err);
 
         // Initialize SPI bus
-        printf("TtnDriver::init(): spi_bus_initialize()\n");
         spi_bus_config_t spi_bus_config{};
         spi_bus_config.miso_io_num = TTN_PIN_SPI_MISO;
         spi_bus_config.mosi_io_num = TTN_PIN_SPI_MOSI;
@@ -55,17 +52,11 @@ namespace scttn
         ttn.configurePins(TTN_SPI_HOST, TTN_PIN_NSS, TTN_PIN_RXTX, TTN_PIN_RST, TTN_PIN_DIO0, TTN_PIN_DIO1);
 
         // The below line can be commented after the first run as the data is saved in NVS
-        ttn.provision(ttnParameters.getDevEui(), ttnParameters.getAppEui(), ttnParameters.getAppKey());
-
-        // Debug
-        printf("end: TtnDriver::finalizado la initi()\n");
+        ttn.provision(lorawanParameter.getDevEui(), ttnParameters.getAppEui(), ttnParameters.getAppKey());
 
     }
 
-    void TtnDriver::connect(ITtnTaskFactory& ttnTaskFacyoty) {
-
-        // Debug
-        printf("start: TtnDriver::connect(...)\n");
+    void LorawanDriver::connect(ITtnTaskFactory& ttnTaskFacyoty) {
 
         // Se intenta el join de forma indefinida
         while (!ttn.join()) {

@@ -2,9 +2,10 @@
 
 #include "Ttn.h"
 
-namespace scttn
+namespace sc::lorawan
 {
-    class ITtnTaskFactory
+    
+    class ILorawanTaskFactory
     {
         public:
             virtual void createAndLaunch(Ttn& ttn) = 0;
