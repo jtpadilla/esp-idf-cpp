@@ -87,10 +87,20 @@ namespace sc::lorawan
         memcpy(buf, global_app_key, 16);
     }
 
+    LorawanDriver* LorawanDriver::instantiate(const LorawanDriverPins lorawanDriverPins, const LorawanParameters lorawanParameters) {
+
+        // Esta clase utiliza de forma subyacente la libreria C LMIC la cual solo soporta la gestion
+        // de un unico dispositivo. 
+        // Como consecuencia solamente se puede crear una instancia de esta clase y para poder controlar
+        // que esto es asi se utilizara este metodo estatico para crera la unica instancia.
+
+        return new LorawanDriver(lorawanDriverPins, lorawanParameters);
+
+    }
 
 
-    LorawanDriver::LorawanDriver()
-        : messageCallback(nullptr)
+    LorawanDriver::LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg, const LorawanParameters lorawanParametersArg)
+        : lorawanDriverPins{lorawanDriverPinsArg}, lorawanParameters { lorawanParametersArg}, messageCallback(nullptr)
     {
     #if defined(TTN_IS_DISABLED)
         ESP_LOGE(TAG, "TTN is disabled. Configure a frequency plan using 'make menuconfig'");
@@ -138,66 +148,8 @@ namespace sc::lorawan
         ttn_hal.leaveCriticalSection();
     }
 
-    bool LorawanDriver::provision(const char *devEui, const char *appEui, const char *appKey)
-    {
-        if (!provisioning.decodeKeys(devEui, appEui, appKey))
-            return false;
-        
-    }
-
-    bool LorawanDriver::provisionWithMAC(const char *appEui, const char *appKey)
-    {
-        if (!provisioning.fromMAC(appEui, appKey))
-            return false;
-        
-    }
-
-
-    void LorawanDriver::startProvisioningTask()
-    {
-    #if defined(TTN_HAS_AT_COMMANDS)
-        provisioning.startTask();
-    #else
-        ESP_LOGE(TAG, "AT commands are disabled. Change the configuration using 'make menuconfig'");
-        ASSERT(0);
-        esp_restart();
-    #endif
-    }
-
-    void LorawanDriver::waitForProvisioning()
-    {
-    #if defined(TTN_HAS_AT_COMMANDS)
-        if (isProvisioned())
-        {
-            ESP_LOGI(TAG, "Device is already provisioned");
-            return;
-        }
-
-        while (!provisioning.haveKeys())
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-        ESP_LOGI(TAG, "Device successfully provisioned");
-    #else
-        ESP_LOGE(TAG, "AT commands are disabled. Change the configuration using 'make menuconfig'");
-        ASSERT(0);
-        esp_restart();
-    #endif
-    }
-
-    bool LorawanDriver::join(const char *devEui, const char *appEui, const char *appKey)
-    {
-        if (!provisioning.decodeKeys(devEui, appEui, appKey))
-            return false;
-        
-        return joinCore();
-    }
 
     bool LorawanDriver::join()
-    {
-        return joinCore();
-    }
-
-    bool LorawanDriver::joinCore()
     {
         ttn_hal.enterCriticalSection();
         waitingReason = TTNWaitingReason::eWaitingForJoin;

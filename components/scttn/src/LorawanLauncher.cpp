@@ -12,8 +12,7 @@ namespace sc::lorawan
 
     LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters)
     {
-        //lorawanDriver = sc::lorawan::LorawanDriver.singleton(lorawanDriverPins, lorawanParameters);
-        lorawanDriver = nullptr;
+        lorawanDriver = sc::lorawan::LorawanDriver::instantiate(lorawanDriverPins, lorawanParameters);
     }
 
     LorawanLauncher::~LorawanLauncher()
