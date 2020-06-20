@@ -11,12 +11,168 @@
 
 #define LMIC_UNUSED_PIN 0xff
 
+static const char* const TAG = "ttn_hal";
+
+
+////////////////////////////////////
+// I/O
+////////////////////////////////////
+
+void hal_pin_rxtx(u1_t val)
+{
+    if (ttn_hal.pinRxTx == LMIC_UNUSED_PIN)
+        return;
+    
+    gpio_set_level(ttn_hal.pinRxTx, val);
+}
+
+void hal_pin_rst(u1_t val)
+{
+    if (ttn_hal.pinRst == LMIC_UNUSED_PIN)
+        return;
+
+    if (val == 0 || val == 1)
+    { // drive pin
+        gpio_set_level(ttn_hal.pinRst, val);
+        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_OUTPUT);
+    }
+    else
+    { // keep pin floating
+        gpio_set_level(ttn_hal.pinRst, val);
+        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_INPUT);
+    }
+}
+
+s1_t hal_getRssiCal (void)
+{
+    return ttn_hal.rssiCal;
+}
+
+ostime_t hal_setModuleActive (bit_t val)
+{
+    return 0;
+}
+
+bit_t hal_queryUsingTcxo(void)
+{
+    return false;
+}
+
+uint8_t hal_getTxPowerPolicy(u1_t inputPolicy, s1_t requestedPower, u4_t frequency)
+{
+    return LMICHAL_radio_tx_power_policy_paboost;
+}
+
+
+////////////////////////////////////
+// SPI
+////////////////////////////////////
+
+void hal_spi_write(u1_t cmd, const u1_t *buf, size_t len)
+{
+    ttn_hal.spiWrite(cmd, buf, len);
+}
+
+void hal_spi_read(u1_t cmd, u1_t *buf, size_t len)
+{
+    ttn_hal.spiRead(cmd, buf, len);
+}
+
+
+////////////////////////////////////
+// TIME
+////////////////////////////////////
+
+// Gets current time in LMIC ticks
+u4_t hal_ticks()
+{
+    // LMIC tick unit: 16µs
+    // esp_timer unit: 1µs
+    return (u4_t)(esp_timer_get_time() >> 4);
+}
+
+// Wait until the specified time.
+// Called if the LMIC code needs to wait for a precise time.
+// All other events are ignored and will be served later.
+u4_t hal_waitUntil(u4_t time)
+{
+    return ttn_hal.waitUntil(time);
+}
+
+// Check if the specified time has been reached or almost reached.
+// Otherwise, save it as alarm time.
+// LMIC calls this function with the scheduled time of the next job
+// in the queue. If the job is not due yet, LMIC will go to sleep.
+u1_t hal_checkTimer(uint32_t time)
+{
+    return ttn_hal.checkTimer(time);
+}
+
+// Go to sleep until next event.
+// Called when LMIC is not busy and not job is due to be executed.
+void hal_sleep()
+{
+    ttn_hal.sleep();
+}
+
+
+////////////////////////////////////
+// IRQ
+////////////////////////////////////
+
+void hal_disableIRQs()
+{
+    // nothing to do as interrupt handlers post message to queue
+    // and don't access any shared data structures
+}
+
+void hal_enableIRQs()
+{
+    // nothing to do as interrupt handlers post message to queue
+    // and don't access any shared data structures
+}
+
+void hal_init_ex(const void *pContext)
+{
+    ttn_hal.init();
+}
+
+
+////////////////////////////////////
+// Fatal failure
+////////////////////////////////////
+
+static hal_failure_handler_t* custom_hal_failure_handler = nullptr;
+
+void hal_set_failure_handler(const hal_failure_handler_t* const handler)
+{
+    custom_hal_failure_handler = handler;
+}
+
+void hal_failed(const char *file, u2_t line)
+{
+    if (custom_hal_failure_handler != nullptr)
+        (*custom_hal_failure_handler)(file, line);
+
+    ESP_LOGE(TAG, "LMIC failed and stopped: %s:%d", file, line);
+
+    // go to sleep forever
+    while (true)
+    {
+        vTaskDelay(portMAX_DELAY);
+    }
+}
+
+
+
+
+
+
+
 #define NOTIFY_BIT_DIO 1
 #define NOTIFY_BIT_TIMER 2
 #define NOTIFY_BIT_WAKEUP 4
 
-
-static const char* const TAG = "ttn_hal";
 
 HAL_ESP32 ttn_hal;
 
@@ -97,51 +253,6 @@ void HAL_ESP32::ioInit()
     ESP_LOGI(TAG, "IO initialized");
 }
 
-void hal_pin_rxtx(u1_t val)
-{
-    if (ttn_hal.pinRxTx == LMIC_UNUSED_PIN)
-        return;
-    
-    gpio_set_level(ttn_hal.pinRxTx, val);
-}
-
-void hal_pin_rst(u1_t val)
-{
-    if (ttn_hal.pinRst == LMIC_UNUSED_PIN)
-        return;
-
-    if (val == 0 || val == 1)
-    { // drive pin
-        gpio_set_level(ttn_hal.pinRst, val);
-        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_OUTPUT);
-    }
-    else
-    { // keep pin floating
-        gpio_set_level(ttn_hal.pinRst, val);
-        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_INPUT);
-    }
-}
-
-s1_t hal_getRssiCal (void)
-{
-    return ttn_hal.rssiCal;
-}
-
-ostime_t hal_setModuleActive (bit_t val)
-{
-    return 0;
-}
-
-bit_t hal_queryUsingTcxo(void)
-{
-    return false;
-}
-
-uint8_t hal_getTxPowerPolicy(u1_t inputPolicy, s1_t requestedPower, u4_t frequency)
-{
-    return LMICHAL_radio_tx_power_policy_paboost;
-}
-
 
 // -----------------------------------------------------------------------------
 // SPI
@@ -165,11 +276,6 @@ void HAL_ESP32::spiInit()
     ESP_LOGI(TAG, "SPI initialized");
 }
 
-void hal_spi_write(u1_t cmd, const u1_t *buf, size_t len)
-{
-    ttn_hal.spiWrite(cmd, buf, len);
-}
-
 void HAL_ESP32::spiWrite(uint8_t cmd, const uint8_t *buf, size_t len)
 {
     memset(&spiTransaction, 0, sizeof(spiTransaction));
@@ -178,11 +284,6 @@ void HAL_ESP32::spiWrite(uint8_t cmd, const uint8_t *buf, size_t len)
     spiTransaction.tx_buffer = buf;
     esp_err_t err = spi_device_transmit(spiHandle, &spiTransaction);
     ESP_ERROR_CHECK(err);
-}
-
-void hal_spi_read(u1_t cmd, u1_t *buf, size_t len)
-{
-    ttn_hal.spiRead(cmd, buf, len);
 }
 
 void HAL_ESP32::spiRead(uint8_t cmd, uint8_t *buf, size_t len)
@@ -319,21 +420,6 @@ bool HAL_ESP32::wait(WaitKind waitKind)
     }
 }
 
-// Gets current time in LMIC ticks
-u4_t hal_ticks()
-{
-    // LMIC tick unit: 16µs
-    // esp_timer unit: 1µs
-    return (u4_t)(esp_timer_get_time() >> 4);
-}
-
-// Wait until the specified time.
-// Called if the LMIC code needs to wait for a precise time.
-// All other events are ignored and will be served later.
-u4_t hal_waitUntil(u4_t time)
-{
-    return ttn_hal.waitUntil(time);
-}
 
 uint32_t HAL_ESP32::waitUntil(uint32_t osTime)
 {
@@ -355,15 +441,6 @@ void HAL_ESP32::wakeUp()
     xTaskNotify(lmicTask, NOTIFY_BIT_WAKEUP, eSetBits);
 }
 
-// Check if the specified time has been reached or almost reached.
-// Otherwise, save it as alarm time.
-// LMIC calls this function with the scheduled time of the next job
-// in the queue. If the job is not due yet, LMIC will go to sleep.
-u1_t hal_checkTimer(uint32_t time)
-{
-    return ttn_hal.checkTimer(time);
-}
-
 uint8_t HAL_ESP32::checkTimer(u4_t osTime)
 {
     int64_t espNow = esp_timer_get_time();
@@ -374,13 +451,6 @@ uint8_t HAL_ESP32::checkTimer(u4_t osTime)
 
     setNextAlarm(espTime);
     return 0;
-}
-
-// Go to sleep until next event.
-// Called when LMIC is not busy and not job is due to be executed.
-void hal_sleep()
-{
-    ttn_hal.sleep();
 }
 
 void HAL_ESP32::sleep()
@@ -395,18 +465,6 @@ void HAL_ESP32::sleep()
 
 // -----------------------------------------------------------------------------
 // IRQ
-
-void hal_disableIRQs()
-{
-    // nothing to do as interrupt handlers post message to queue
-    // and don't access any shared data structures
-}
-
-void hal_enableIRQs()
-{
-    // nothing to do as interrupt handlers post message to queue
-    // and don't access any shared data structures
-}
 
 
 // -----------------------------------------------------------------------------
@@ -433,11 +491,6 @@ void HAL_ESP32::lmicBackgroundTask(void* pvParameter) {
     os_runloop();
 }
 
-void hal_init_ex(const void *pContext)
-{
-    ttn_hal.init();
-}
-
 void HAL_ESP32::init()
 {
     // configure radio I/O and interrupt handler
@@ -457,26 +510,3 @@ void HAL_ESP32::startLMICTask() {
 }
 
 
-// -----------------------------------------------------------------------------
-// Fatal failure
-
-static hal_failure_handler_t* custom_hal_failure_handler = nullptr;
-
-void hal_set_failure_handler(const hal_failure_handler_t* const handler)
-{
-    custom_hal_failure_handler = handler;
-}
-
-void hal_failed(const char *file, u2_t line)
-{
-    if (custom_hal_failure_handler != nullptr)
-        (*custom_hal_failure_handler)(file, line);
-
-    ESP_LOGE(TAG, "LMIC failed and stopped: %s:%d", file, line);
-
-    // go to sleep forever
-    while (true)
-    {
-        vTaskDelay(portMAX_DELAY);
-    }
-}
