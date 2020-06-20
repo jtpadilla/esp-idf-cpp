@@ -1,14 +1,3 @@
-/*******************************************************************************
- * 
- * ttn-esp32 - The Things Network device library for ESP-IDF / SX127x
- * 
- * Copyright (c) 2018-2019 Manuel Bleichenbacher
- * 
- * Licensed under MIT License
- * https://opensource.org/licenses/MIT
- *
- * Hardware abstraction layer to run LMIC on a ESP32 using ESP-IDF.
- *******************************************************************************/
 
 #include "../lmic/lmic.h"
 #include "../hal/hal_esp32.h"
@@ -34,7 +23,6 @@ HAL_ESP32 ttn_hal;
 TaskHandle_t HAL_ESP32::lmicTask = nullptr;
 uint32_t HAL_ESP32::dioInterruptTime = 0;
 uint8_t HAL_ESP32::dioNum = 0;
-
 
 // -----------------------------------------------------------------------------
 // Constructor
@@ -296,7 +284,7 @@ void HAL_ESP32::timerCallback(void *arg)
 // - I/O interrupt (DIO0 or DIO1 pin)
 bool HAL_ESP32::wait(WaitKind waitKind)
 {
-    TickType_t ticksToWait = waitKind == CHECK_IO ? 0 : portMAX_DELAY;
+    TickType_t ticksToWait = waitKind == WaitKind::CHECK_IO ? 0 : portMAX_DELAY;
     while (true)
     {
         uint32_t bits = ulTaskNotifyTake(pdTRUE, ticksToWait);
@@ -305,7 +293,7 @@ bool HAL_ESP32::wait(WaitKind waitKind)
 
         if ((bits & NOTIFY_BIT_WAKEUP) != 0)
         {
-            if (waitKind != WAIT_FOR_TIMER)
+            if (waitKind != WaitKind::WAIT_FOR_TIMER)
             {
                 disarmTimer();
                 return true;
@@ -315,17 +303,17 @@ bool HAL_ESP32::wait(WaitKind waitKind)
         {
             disarmTimer();
             setNextAlarm(0);
-            if (waitKind != CHECK_IO)
+            if (waitKind != WaitKind::CHECK_IO)
                 return true;
         }
         else // IO interrupt
         {
-            if (waitKind != WAIT_FOR_TIMER)
+            if (waitKind != WaitKind::WAIT_FOR_TIMER)
                 disarmTimer();
             enterCriticalSection();
             radio_irq_handler_v2(dioNum, dioInterruptTime);
             leaveCriticalSection();
-            if (waitKind != WAIT_FOR_TIMER)
+            if (waitKind != WaitKind::WAIT_FOR_TIMER)
                 return true;
         }
     }
@@ -353,7 +341,7 @@ uint32_t HAL_ESP32::waitUntil(uint32_t osTime)
     int64_t espTime = osTimeToEspTime(espNow, osTime);
     setNextAlarm(espTime);
     armTimer(espNow);
-    wait(WAIT_FOR_TIMER);
+    wait(WaitKind::WAIT_FOR_TIMER);
 
     u4_t osNow = hal_ticks();
     u4_t diff = osNow - osTime;
@@ -397,11 +385,11 @@ void hal_sleep()
 
 void HAL_ESP32::sleep()
 {
-    if (wait(CHECK_IO))
+    if (wait(WaitKind::CHECK_IO))
         return;
 
     armTimer(esp_timer_get_time());
-    wait(WAIT_FOR_ANY_EVENT);
+    wait(WaitKind::WAIT_FOR_ANY_EVENT);
 }
 
 
