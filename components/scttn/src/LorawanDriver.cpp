@@ -5,51 +5,13 @@
 #include "esp_event.h"
 #include "esp_log.h"
 
+#include "hal/lmic_plugin.h"
 #include "hal/LorawanDriverHAL.h"
 #include "lmic/lmic.h"
 
 #include "LorawanDriver.h"
 #include "LorawanLogging.h"
 
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-// Conexion con la libreria LMIC (INICIO)
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-
-// --- LMIC callbacks
-static uint8_t global_app_eui[8];
-static uint8_t global_app_key[16];
-static uint8_t global_dev_eui[8];
-
-// This EUI must be in little-endian format, so least-significant-byte first.
-// When copying an EUI from ttnctl output, this means to reverse the bytes.
-// For TTN issued EUIs the last bytes should be 0xD5, 0xB3, 0x70.
-// The order is swapped in provisioning_decode_keys().
-void os_getArtEui (u1_t* buf)
-{
-    memcpy(buf, global_app_eui, 8);
-}
-
-// This key should be in big endian format (or, since it is not really a number
-// but a block of memory, endianness does not really apply). In practice, a key
-// taken from ttnctl can be copied as-is.
-void os_getDevKey (u1_t* buf)
-{
-    memcpy(buf, global_app_key, 16);
-}
-
-// This should also be in little endian format, see above.
-void os_getDevEui (u1_t* buf)
-{
-    memcpy(buf, global_dev_eui, 8);
-}
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-// Conexion con la libreria LMIC (FINAL)
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
 
 namespace genielink::lorawan
 {
