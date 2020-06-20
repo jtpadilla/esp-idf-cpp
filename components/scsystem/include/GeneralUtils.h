@@ -6,8 +6,6 @@
 #include <algorithm>
 #include <vector>
 
-#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
-
 namespace scsystem
 {
 

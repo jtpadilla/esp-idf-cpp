@@ -1,9 +1,9 @@
 
 extern void mainFreeRtos();
-extern void mainTtn();
+extern void mainLorawan();
 
 extern "C" void app_main(void)
 {
     //mainFreeRtos();
-    mainTtn();
+    mainLorawan();
 }
