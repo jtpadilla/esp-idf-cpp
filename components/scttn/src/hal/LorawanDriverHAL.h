@@ -79,5 +79,5 @@ namespace sc::lorawan::hal
 
 }
 
-extern sc::lorawan::hal::LorawanDriverHAL ttn_hal;
+extern sc::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
 

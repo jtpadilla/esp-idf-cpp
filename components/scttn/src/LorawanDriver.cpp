@@ -126,12 +126,12 @@ namespace sc::lorawan
 
         ASSERT(ttnInstance == nullptr);
         ttnInstance = this;
-        ttn_hal.initCriticalSection();
+        lorawandriver_hal.initCriticalSection();
 
        
         // The SPI bus must be first configured using spi_bus_initialize(). Then it is passed as the first parameter.
         // Additionally, 'gpio_install_isr_service()' must be called to initialize the GPIO ISR handler service.
-        ttn_hal.configurePins(
+        lorawandriver_hal.configurePins(
             lorawanDriverPinsArg.get_spi_host(), 
             lorawanDriverPinsArg.get_pin_nss(), 
             lorawanDriverPinsArg.get_pin_rxtx(), 
@@ -152,7 +152,7 @@ namespace sc::lorawan
 
         lmicEventQueue = xQueueCreate(4, sizeof(TTNLmicEvent));
         ASSERT(lmicEventQueue != nullptr);
-        ttn_hal.startLMICTask();
+        lorawandriver_hal.startLMICTask();
 
         
     }
@@ -164,24 +164,24 @@ namespace sc::lorawan
 
     void LorawanDriver::reset()
     {
-        ttn_hal.enterCriticalSection();
+        lorawandriver_hal.enterCriticalSection();
         LMIC_reset();
         waitingReason = TTNWaitingReason::None;
         if (lmicEventQueue != nullptr)
         {
             xQueueReset(lmicEventQueue);
         }
-        ttn_hal.leaveCriticalSection();
+        lorawandriver_hal.leaveCriticalSection();
     }
 
 
     bool LorawanDriver::join()
     {
-        ttn_hal.enterCriticalSection();
+        lorawandriver_hal.enterCriticalSection();
         waitingReason = TTNWaitingReason::ForJoin;
         LMIC_startJoining();
-        ttn_hal.wakeUp();
-        ttn_hal.leaveCriticalSection();
+        lorawandriver_hal.wakeUp();
+        lorawandriver_hal.leaveCriticalSection();
 
         TTNLmicEvent event;
         xQueueReceive(lmicEventQueue, &event, portMAX_DELAY);
@@ -190,10 +190,10 @@ namespace sc::lorawan
 
     LorawanResponseCode LorawanDriver::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
     {
-        ttn_hal.enterCriticalSection();
+        lorawandriver_hal.enterCriticalSection();
         if (waitingReason != TTNWaitingReason::None || (LMIC.opmode & OP_TXRXPEND) != 0)
         {
-            ttn_hal.leaveCriticalSection();
+            lorawandriver_hal.leaveCriticalSection();
             return LorawanResponseCode::ErrorTransmissionFailed;
         }
 
@@ -201,8 +201,8 @@ namespace sc::lorawan
         LMIC.client.txMessageCb = messageTransmittedCallback;
         LMIC.client.txMessageUserData = nullptr;
         LMIC_setTxData2(port, (xref2u1_t)payload, length, confirm);
-        ttn_hal.wakeUp();
-        ttn_hal.leaveCriticalSection();
+        lorawandriver_hal.wakeUp();
+        lorawandriver_hal.leaveCriticalSection();
 
         while (true)
         {
@@ -235,7 +235,7 @@ namespace sc::lorawan
 
     void LorawanDriver::setRSSICal(int8_t rssiCal)
     {
-        ttn_hal.rssiCal = rssiCal;
+        lorawandriver_hal.rssiCal = rssiCal;
     }
 
 

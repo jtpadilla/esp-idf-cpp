@@ -12,7 +12,7 @@
 #include "../lmic/lmic.h"
 #include "../hal/LorawanDriverHAL.h"
 
-static const char* const TAG = "ttn_hal";
+static const char* const TAG = "lorawandriver_hal";
 
 ////////////////////////////////////
 // I/O
@@ -20,32 +20,32 @@ static const char* const TAG = "ttn_hal";
 
 void hal_pin_rxtx(u1_t val)
 {
-    if (ttn_hal.pinRxTx == LMIC_UNUSED_PIN)
+    if (lorawandriver_hal.pinRxTx == LMIC_UNUSED_PIN)
         return;
     
-    gpio_set_level(ttn_hal.pinRxTx, val);
+    gpio_set_level(lorawandriver_hal.pinRxTx, val);
 }
 
 void hal_pin_rst(u1_t val)
 {
-    if (ttn_hal.pinRst == LMIC_UNUSED_PIN)
+    if (lorawandriver_hal.pinRst == LMIC_UNUSED_PIN)
         return;
 
     if (val == 0 || val == 1)
     { // drive pin
-        gpio_set_level(ttn_hal.pinRst, val);
-        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_OUTPUT);
+        gpio_set_level(lorawandriver_hal.pinRst, val);
+        gpio_set_direction(lorawandriver_hal.pinRst, GPIO_MODE_OUTPUT);
     }
     else
     { // keep pin floating
-        gpio_set_level(ttn_hal.pinRst, val);
-        gpio_set_direction(ttn_hal.pinRst, GPIO_MODE_INPUT);
+        gpio_set_level(lorawandriver_hal.pinRst, val);
+        gpio_set_direction(lorawandriver_hal.pinRst, GPIO_MODE_INPUT);
     }
 }
 
 s1_t hal_getRssiCal (void)
 {
-    return ttn_hal.rssiCal;
+    return lorawandriver_hal.rssiCal;
 }
 
 ostime_t hal_setModuleActive (bit_t val)
@@ -70,12 +70,12 @@ uint8_t hal_getTxPowerPolicy(u1_t inputPolicy, s1_t requestedPower, u4_t frequen
 
 void hal_spi_write(u1_t cmd, const u1_t *buf, size_t len)
 {
-    ttn_hal.spiWrite(cmd, buf, len);
+    lorawandriver_hal.spiWrite(cmd, buf, len);
 }
 
 void hal_spi_read(u1_t cmd, u1_t *buf, size_t len)
 {
-    ttn_hal.spiRead(cmd, buf, len);
+    lorawandriver_hal.spiRead(cmd, buf, len);
 }
 
 
@@ -96,7 +96,7 @@ u4_t hal_ticks()
 // All other events are ignored and will be served later.
 u4_t hal_waitUntil(u4_t time)
 {
-    return ttn_hal.waitUntil(time);
+    return lorawandriver_hal.waitUntil(time);
 }
 
 // Check if the specified time has been reached or almost reached.
@@ -105,14 +105,14 @@ u4_t hal_waitUntil(u4_t time)
 // in the queue. If the job is not due yet, LMIC will go to sleep.
 u1_t hal_checkTimer(uint32_t time)
 {
-    return ttn_hal.checkTimer(time);
+    return lorawandriver_hal.checkTimer(time);
 }
 
 // Go to sleep until next event.
 // Called when LMIC is not busy and not job is due to be executed.
 void hal_sleep()
 {
-    ttn_hal.sleep();
+    lorawandriver_hal.sleep();
 }
 
 
@@ -134,7 +134,7 @@ void hal_enableIRQs()
 
 void hal_init_ex(const void *pContext)
 {
-    ttn_hal.init();
+    lorawandriver_hal.init();
 }
 
 

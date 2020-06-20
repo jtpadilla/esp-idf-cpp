@@ -9,9 +9,9 @@
 #include "driver/timer.h"
 #include "esp_log.h"
 
-static const char* const TAG = "ttn_hal";
+static const char* const TAG = "lorawandriver_hal";
 
-sc::lorawan::hal::LorawanDriverHAL ttn_hal;
+sc::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
 
 #define NOTIFY_BIT_DIO 1
 #define NOTIFY_BIT_TIMER 2
