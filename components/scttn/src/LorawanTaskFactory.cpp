@@ -1,7 +1,7 @@
 
 #include "LorawanTaskFactory.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
     
     ILorawanTaskFactory::~ILorawanTaskFactory() {

@@ -5,7 +5,7 @@
 #include "LorawanParameters.h"
 #include "LorawanTaskFactory.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     class LorawanLauncher 

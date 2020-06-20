@@ -7,12 +7,12 @@
 
 const unsigned JOIN_RETRY_INTERVAL = 30;
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     LorawanLauncher::LorawanLauncher(const LorawanDriverPins& lorawanDriverPins, const LorawanParameters& lorawanParameters)
     {
-        lorawanDriver = sc::lorawan::LorawanDriver::instantiate(lorawanDriverPins, lorawanParameters);
+        lorawanDriver = genielink::lorawan::LorawanDriver::instantiate(lorawanDriverPins, lorawanParameters);
     }
 
     LorawanLauncher::~LorawanLauncher()

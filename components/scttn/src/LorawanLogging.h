@@ -5,7 +5,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/ringbuf.h>
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
         
     /**

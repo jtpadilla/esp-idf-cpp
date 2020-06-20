@@ -6,10 +6,10 @@
 
 #include "LorawanParametersUtil.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
     
-    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey, std::string devEui) {
+    genielink::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey, std::string devEui) {
         LorawanParameters lorawanParameters{};
         decodeAppEud(lorawanParameters, appEui);
         decodeAppKey(lorawanParameters, appKey);
@@ -17,7 +17,7 @@ namespace sc::lorawan
         return lorawanParameters;
     }
 
-    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey) {
+    genielink::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey) {
         LorawanParameters lorawanParameters{};
         decodeAppEud(lorawanParameters, appEui);
         decodeAppKey(lorawanParameters, appKey);
@@ -29,7 +29,7 @@ namespace sc::lorawan
         uint8_t buf_app_eui[8];
         if (appEui.length() != 16 || !hexStrToBin(appEui.c_str(), buf_app_eui, 8))
         {
-            throw sc::lorawan::LorawanParametersException{"Invalid application EUI: " + appEui};
+            throw genielink::lorawan::LorawanParametersException{"Invalid application EUI: " + appEui};
         }
         swapBytes(buf_app_eui, 8);
         std::memcpy(&lorawanParameters.appEui, buf_app_eui, sizeof(lorawanParameters.appEui));
@@ -39,7 +39,7 @@ namespace sc::lorawan
         uint8_t buf_app_key[16];
         if (appKey.length() != 32 || !hexStrToBin(appKey.c_str(), buf_app_key, 16))
         {
-            throw sc::lorawan::LorawanParametersException{"Invalid application key: " + appKey};
+            throw genielink::lorawan::LorawanParametersException{"Invalid application key: " + appKey};
         }
         std::memcpy(&lorawanParameters.appKey, buf_app_key, sizeof(lorawanParameters.appKey));
     }
@@ -48,7 +48,7 @@ namespace sc::lorawan
         uint8_t buf_dev_eui[8];
         if (devEui.length() != 16 || !hexStrToBin(devEui.c_str(), buf_dev_eui, 8))
         {
-            throw sc::lorawan::LorawanParametersException{"Invalid device EUI: " + devEui};
+            throw genielink::lorawan::LorawanParametersException{"Invalid device EUI: " + devEui};
         }
         swapBytes(buf_dev_eui, 8);
         std::memcpy(&lorawanParameters.devEui, buf_dev_eui, sizeof(lorawanParameters.devEui));

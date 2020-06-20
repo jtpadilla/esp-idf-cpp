@@ -8,7 +8,7 @@
 
 typedef uint8_t port_t;
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     /**

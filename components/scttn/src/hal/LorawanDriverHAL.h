@@ -11,7 +11,7 @@
 
 #define LMIC_UNUSED_PIN 0xff
 
-namespace sc::lorawan::hal
+namespace genielink::lorawan::hal
 {
 
     enum class WaitKind {
@@ -79,5 +79,5 @@ namespace sc::lorawan::hal
 
 }
 
-extern sc::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
+extern genielink::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
 

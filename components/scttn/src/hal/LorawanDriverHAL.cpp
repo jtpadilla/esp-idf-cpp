@@ -11,13 +11,13 @@
 
 static const char* const TAG = "lorawandriver_hal";
 
-sc::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
+genielink::lorawan::hal::LorawanDriverHAL lorawandriver_hal;
 
 #define NOTIFY_BIT_DIO 1
 #define NOTIFY_BIT_TIMER 2
 #define NOTIFY_BIT_WAKEUP 4
 
-namespace sc::lorawan::hal
+namespace genielink::lorawan::hal
 {
 
     TaskHandle_t LorawanDriverHAL::lmicTask = nullptr;

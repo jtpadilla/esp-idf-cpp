@@ -4,7 +4,7 @@
 
 #define NOT_CONNECTED 0xff
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     class LorawanDriverPins

@@ -2,7 +2,7 @@
 
 #include "LorawanDriverPins.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     class LorawanDriverPinsTtgoTBeam: public LorawanDriverPins

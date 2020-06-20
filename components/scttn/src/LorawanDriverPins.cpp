@@ -5,7 +5,7 @@
 
 #include "LorawanDriverPins.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     LorawanDriverPins::LorawanDriverPins(

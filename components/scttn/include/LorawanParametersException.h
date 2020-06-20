@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     class LorawanParametersException: public std::exception

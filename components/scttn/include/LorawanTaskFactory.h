@@ -2,7 +2,7 @@
 
 #include "LorawanDriver.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
     
     class ILorawanTaskFactory

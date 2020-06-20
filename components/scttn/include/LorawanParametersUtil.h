@@ -4,15 +4,15 @@
 #include "LorawanParameters.h"
 #include "LorawanParametersException.h"
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     class LorawanParametersUtil
     {
 
         public:
-            static sc::lorawan::LorawanParameters convert(std::string appEui, std::string appKey, std::string devEui);
-            static sc::lorawan::LorawanParameters convert(std::string appEui, std::string appKey);
+            static genielink::lorawan::LorawanParameters convert(std::string appEui, std::string appKey, std::string devEui);
+            static genielink::lorawan::LorawanParameters convert(std::string appEui, std::string appKey);
 
         private:
             static void decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, std::string& devEui);

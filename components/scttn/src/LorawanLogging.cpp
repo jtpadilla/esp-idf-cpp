@@ -13,7 +13,7 @@
 static const char* const TAG = "lmic";
 static LorawLogging ttnLog;
 
-namespace sc::lorawan
+namespace genielink::lorawan
 {
 
     /**

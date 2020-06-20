@@ -17,13 +17,13 @@ void mainLorawan(void)
 {
 
     // Configuracion hardware para un TTG-T-Beam
-    sc::lorawan::LorawanDriverPinsTtgoTBeam lorawanDriverPins {};    
+    genielink::lorawan::LorawanDriverPinsTtgoTBeam lorawanDriverPins {};    
 
     // Se prepara la configuracion para conectar con la red Lorawan
-    sc::lorawan::LorawanParameters lorawanParameters = sc::lorawan::LorawanParametersUtil::convert(std::string{devEui}, std::string{appEui}, std::string{appKey});
+    genielink::lorawan::LorawanParameters lorawanParameters = genielink::lorawan::LorawanParametersUtil::convert(std::string{devEui}, std::string{appEui}, std::string{appKey});
 
     // Se crea el driver para comunicar con la red LoraWan
-    sc::lorawan::LorawanLauncher lorawanLauncher {lorawanDriverPins, lorawanParameters};
+    genielink::lorawan::LorawanLauncher lorawanLauncher {lorawanDriverPins, lorawanParameters};
 
     // Se encargara de crear la tarea que se hara cargo de la session con la red.
     ExampleLorawanTaskFactory exampleLorawanTaskFactory{};
