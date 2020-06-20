@@ -44,6 +44,14 @@ namespace sc::lorawan
 
         public:
 
+            /**
+             * @brief Crea la instancia del driver
+             * 
+             * @param lorawanDriverPinsArg configuracion de pins que utilizara el driver
+             * @param lorawanParametersArg Parametros utilizados para la conexion con la red
+             * 
+             * Solo puede ser creada una instancia
+             */
             static LorawanDriver *instantiate(const LorawanDriverPins lorawanDriverPinsArg, const LorawanParameters lorawanParametersArg);
 
             /**
@@ -137,7 +145,6 @@ namespace sc::lorawan
             void setRSSICal(int8_t rssiCal);
 
         private:
-            LorawanDriverPins lorawanDriverPins;
             LorawanMessageCallback messageCallback;
 
     };

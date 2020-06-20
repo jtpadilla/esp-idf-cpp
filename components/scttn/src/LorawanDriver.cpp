@@ -81,7 +81,8 @@ namespace sc::lorawan
      */
     struct TTNLmicEvent {
 
-        TTNLmicEvent(TTNEvent ev = TTNEvent::None): event(ev) { }
+        TTNLmicEvent(TTNEvent ev = TTNEvent::None): event(ev) {
+        }
 
         TTNEvent event;
         uint8_t port;
@@ -106,7 +107,8 @@ namespace sc::lorawan
 
     LorawanDriver* LorawanDriver::instantiate(const LorawanDriverPins lorawanDriverPins, const LorawanParameters lorawanParameters) {
 
-        // Configuracion de LMIC
+        // Los parametros para conectarse a la red Lora se colocan en las variables golables
+        // que utilizara LMIC
         std::memcpy(global_app_eui, &lorawanParameters.appEui, sizeof(lorawanParameters.appEui));
         std::memcpy(global_app_key, &lorawanParameters.appKey, sizeof(lorawanParameters.appKey));
         std::memcpy(global_dev_eui, &lorawanParameters.devEui, sizeof(lorawanParameters.devEui));
@@ -115,9 +117,7 @@ namespace sc::lorawan
 
     }
 
-
     LorawanDriver::LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg)
-        : lorawanDriverPins{lorawanDriverPinsArg}, messageCallback(nullptr)
     {
     #if defined(TTN_IS_DISABLED)
         ESP_LOGE(TAG, "TTN is disabled. Configure a frequency plan using 'make menuconfig'");
@@ -127,16 +127,18 @@ namespace sc::lorawan
         ASSERT(ttnInstance == nullptr);
         ttnInstance = this;
         ttn_hal.initCriticalSection();
-    }
 
-    LorawanDriver::~LorawanDriver()
-    {
-        // nothing to do
-    }
-
-    void LorawanDriver::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
-    {
-        ttn_hal.configurePins(spi_host, nss, rxtx, rst, dio0, dio1);
+       
+        // The SPI bus must be first configured using spi_bus_initialize(). Then it is passed as the first parameter.
+        // Additionally, 'gpio_install_isr_service()' must be called to initialize the GPIO ISR handler service.
+        ttn_hal.configurePins(
+            lorawanDriverPinsArg.get_spi_host(), 
+            lorawanDriverPinsArg.get_pin_nss(), 
+            lorawanDriverPinsArg.get_pin_rxtx(), 
+            lorawanDriverPinsArg.get_pin_rst(), 
+            lorawanDriverPinsArg.get_pin_di00(), 
+            lorawanDriverPinsArg.get_pin_di01()
+            );
 
     #if LMIC_ENABLE_event_logging
         logging = TTNLogging::initInstance();
@@ -151,6 +153,13 @@ namespace sc::lorawan
         lmicEventQueue = xQueueCreate(4, sizeof(TTNLmicEvent));
         ASSERT(lmicEventQueue != nullptr);
         ttn_hal.startLMICTask();
+
+        
+    }
+
+    LorawanDriver::~LorawanDriver()
+    {
+        // nothing to do
     }
 
     void LorawanDriver::reset()
