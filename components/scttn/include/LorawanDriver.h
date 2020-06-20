@@ -49,7 +49,7 @@ namespace sc::lorawan
             /**
              * @brief Construct a new The Things Network device instance.
              */
-            LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg, const LorawanParameters lorawanParametersArg);
+            LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg);
 
             /**
              * @brief Destroy the The Things Network device instance.
@@ -138,8 +138,6 @@ namespace sc::lorawan
 
         private:
             LorawanDriverPins lorawanDriverPins;
-            LorawanParameters lorawanParameters;
-
             LorawanMessageCallback messageCallback;
 
     };

@@ -1,4 +1,6 @@
 
+#include <cstring>
+
 #include "freertos/FreeRTOS.h"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -62,7 +64,16 @@ namespace sc::lorawan
     static void messageReceivedCallback(void *userData, uint8_t port, const uint8_t *message, size_t messageSize);
     static void messageTransmittedCallback(void *userData, int success);
 
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // Conexion con la libreria LMIC (INICIO)
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
     // --- LMIC callbacks
+    static uint8_t global_app_eui[8];
+    static uint8_t global_app_key[16];
+    static uint8_t global_dev_eui[8];
 
     // This EUI must be in little-endian format, so least-significant-byte first.
     // When copying an EUI from ttnctl output, this means to reverse the bytes.
@@ -73,12 +84,6 @@ namespace sc::lorawan
         memcpy(buf, global_app_eui, 8);
     }
 
-    // This should also be in little endian format, see above.
-    void os_getDevEui (u1_t* buf)
-    {
-        memcpy(buf, global_dev_eui, 8);
-    }
-
     // This key should be in big endian format (or, since it is not really a number
     // but a block of memory, endianness does not really apply). In practice, a key
     // taken from ttnctl can be copied as-is.
@@ -87,20 +92,32 @@ namespace sc::lorawan
         memcpy(buf, global_app_key, 16);
     }
 
+    // This should also be in little endian format, see above.
+    void os_getDevEui (u1_t* buf)
+    {
+        memcpy(buf, global_dev_eui, 8);
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // Conexion con la libreria LMIC (FINAL)
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
     LorawanDriver* LorawanDriver::instantiate(const LorawanDriverPins lorawanDriverPins, const LorawanParameters lorawanParameters) {
 
-        // Esta clase utiliza de forma subyacente la libreria C LMIC la cual solo soporta la gestion
-        // de un unico dispositivo. 
-        // Como consecuencia solamente se puede crear una instancia de esta clase y para poder controlar
-        // que esto es asi se utilizara este metodo estatico para crera la unica instancia.
+        // Configuracion de LMIC
+        std::memcpy(global_app_eui, &lorawanParameters.appEui, sizeof(lorawanParameters.appEui));
+        std::memcpy(global_app_key, &lorawanParameters.appKey, sizeof(lorawanParameters.appKey));
+        std::memcpy(global_dev_eui, &lorawanParameters.devEui, sizeof(lorawanParameters.devEui));
 
-        return new LorawanDriver(lorawanDriverPins, lorawanParameters);
+        return new LorawanDriver(lorawanDriverPins);
 
     }
 
 
-    LorawanDriver::LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg, const LorawanParameters lorawanParametersArg)
-        : lorawanDriverPins{lorawanDriverPinsArg}, lorawanParameters { lorawanParametersArg}, messageCallback(nullptr)
+    LorawanDriver::LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg)
+        : lorawanDriverPins{lorawanDriverPinsArg}, messageCallback(nullptr)
     {
     #if defined(TTN_IS_DISABLED)
         ESP_LOGE(TAG, "TTN is disabled. Configure a frequency plan using 'make menuconfig'");
