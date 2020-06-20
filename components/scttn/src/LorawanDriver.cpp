@@ -39,7 +39,7 @@ namespace sc::lorawan
      */
     struct TTNLmicEvent {
 
-        TTNLmicEvent(TTNEvent ev = eEvtNone): event(ev) { }
+        TTNLmicEvent(TTNEvent ev = TTNEvent::eEvtNone): event(ev) { }
 
         TTNEvent event;
         uint8_t port;
@@ -52,7 +52,7 @@ namespace sc::lorawan
 
     static LorawanDriver* ttnInstance;
     static QueueHandle_t lmicEventQueue = nullptr;
-    static TTNWaitingReason waitingReason = eWaitingNone;
+    static TTNWaitingReason waitingReason = TTNWaitingReason::eWaitingNone;
 
     #if LMIC_ENABLE_event_logging
     static LorawanLogging* logging;
@@ -130,7 +130,7 @@ namespace sc::lorawan
     {
         ttn_hal.enterCriticalSection();
         LMIC_reset();
-        waitingReason = eWaitingNone;
+        waitingReason = TTNWaitingReason::eWaitingNone;
         if (lmicEventQueue != nullptr)
         {
             xQueueReset(lmicEventQueue);
@@ -200,26 +200,26 @@ namespace sc::lorawan
     bool LorawanDriver::joinCore()
     {
         ttn_hal.enterCriticalSection();
-        waitingReason = eWaitingForJoin;
+        waitingReason = TTNWaitingReason::eWaitingForJoin;
         LMIC_startJoining();
         ttn_hal.wakeUp();
         ttn_hal.leaveCriticalSection();
 
         TTNLmicEvent event;
         xQueueReceive(lmicEventQueue, &event, portMAX_DELAY);
-        return event.event == eEvtJoinCompleted;
+        return event.event == TTNEvent::eEvtJoinCompleted;
     }
 
     LorawanResponseCode LorawanDriver::transmitMessage(const uint8_t *payload, size_t length, port_t port, bool confirm)
     {
         ttn_hal.enterCriticalSection();
-        if (waitingReason != eWaitingNone || (LMIC.opmode & OP_TXRXPEND) != 0)
+        if (waitingReason != TTNWaitingReason::eWaitingNone || (LMIC.opmode & OP_TXRXPEND) != 0)
         {
             ttn_hal.leaveCriticalSection();
             return kTTNErrorTransmissionFailed;
         }
 
-        waitingReason = eWaitingForTransmission;
+        waitingReason = TTNWaitingReason::eWaitingForTransmission;
         LMIC.client.txMessageCb = messageTransmittedCallback;
         LMIC.client.txMessageUserData = nullptr;
         LMIC_setTxData2(port, (xref2u1_t)payload, length, confirm);
@@ -233,15 +233,15 @@ namespace sc::lorawan
 
             switch (result.event)
             {
-                case eEvtMessageReceived:
+                case TTNEvent::eEvtMessageReceived:
                     if (messageCallback != nullptr)
                         messageCallback(result.message, result.messageSize, result.port);
                     break;
 
-                case eEvtTransmissionCompleted:
+                case TTNEvent::eEvtTransmissionCompleted:
                     return kTTNSuccessfulTransmission;
 
-                case eEvtTransmissionFailed:
+                case TTNEvent::eEvtTransmissionFailed:
                     return kTTNErrorTransmissionFailed;
 
                 default:
@@ -277,32 +277,32 @@ namespace sc::lorawan
         ESP_LOGI(TAG, "event %s", eventNames[event]);
     #endif
 
-        TTNEvent ttnEvent = eEvtNone;
+        TTNEvent ttnEvent = TTNEvent::eEvtNone;
 
-        if (waitingReason == eWaitingForJoin)
+        if (waitingReason == TTNWaitingReason::eWaitingForJoin)
         {
             if (event == EV_JOINED)
             {
-                ttnEvent = eEvtJoinCompleted;
+                ttnEvent = TTNEvent::eEvtJoinCompleted;
             }
             else if (event == EV_REJOIN_FAILED || event == EV_RESET)
             {
-                ttnEvent = eEvtJoinFailed;
+                ttnEvent = TTNEvent::eEvtJoinFailed;
             }
         }
 
-        if (ttnEvent == eEvtNone)
+        if (ttnEvent == TTNEvent::eEvtNone)
             return;
 
         TTNLmicEvent result(ttnEvent);
-        waitingReason = eWaitingNone;
+        waitingReason = TTNWaitingReason::eWaitingNone;
         xQueueSend(lmicEventQueue, &result, pdMS_TO_TICKS(100));
     }
 
     // Sera llamado por LMIC cuando se reciba un mensaje
     void messageReceivedCallback(void *userData, uint8_t port, const uint8_t *message, size_t nMessage)
     {
-        TTNLmicEvent result(eEvtMessageReceived);
+        TTNLmicEvent result(TTNEvent::eEvtMessageReceived);
         result.port = port;
         result.message = message;
         result.messageSize = nMessage;
@@ -312,8 +312,8 @@ namespace sc::lorawan
     // sera llamado por LMIC cuando un mensaje se ha transmitido (o la transmision ha fallado)
     void messageTransmittedCallback(void *userData, int success)
     {
-        waitingReason = eWaitingNone;
-        TTNLmicEvent result(success ? eEvtTransmissionCompleted : eEvtTransmissionFailed);
+        waitingReason = TTNWaitingReason::eWaitingNone;
+        TTNLmicEvent result(success ? TTNEvent::eEvtTransmissionCompleted : TTNEvent::eEvtTransmissionFailed);
         xQueueSend(lmicEventQueue, &result, pdMS_TO_TICKS(100));
     }
 
