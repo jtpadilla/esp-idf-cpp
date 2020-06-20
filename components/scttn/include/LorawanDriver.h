@@ -14,12 +14,12 @@ namespace sc::lorawan
     /**
      * @brief Response codes
      */
-    enum LorawanResponseCode
+    enum class LorawanResponseCode
     {
-        kTTNErrorTransmissionFailed = -1,
-        kTTNErrorUnexpected = -10,
-        kTTNSuccessfulTransmission = 1,
-        kTTNSuccessfulReceive = 2
+        ErrorTransmissionFailed = -1,
+        ErrorUnexpected = -10,
+        SuccessfulTransmission = 1,
+        SuccessfulReceive = 2
     };
 
     /**
@@ -103,9 +103,9 @@ namespace sc::lorawan
              * @param length   number of bytes to be transmitted
              * @param port     port (default to 1)
              * @param confirm  flag indicating if a confirmation should be requested. Default to 'false'
-             * @return TkTTNSuccessfulTransmission   Successful transmission
-             * @return kTTNErrorTransmissionFailed   Transmission failed
-             * @return TkTTNErrorUnexpected          Unexpected error
+             * @return TSuccessfulTransmission   Successful transmission
+             * @return ErrorTransmissionFailed   Transmission failed
+             * @return TErrorUnexpected          Unexpected error
              */
             LorawanResponseCode transmitMessage(const uint8_t *payload, size_t length, port_t port = 1, bool confirm = false);
 
