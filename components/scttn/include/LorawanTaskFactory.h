@@ -8,10 +8,9 @@ namespace sc::lorawan
     class ILorawanTaskFactory
     {
         public:
-        /*
-            virtual ~ILorawanTaskFactory() = 0;
-            */
+            virtual ~ILorawanTaskFactory();
             virtual void createAndLaunch(LorawanDriver *lorawanDriver) = 0;
+
     };
 
 }

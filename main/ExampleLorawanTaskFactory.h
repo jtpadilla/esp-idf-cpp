@@ -3,19 +3,17 @@
 #include "LorawanDriver.h"
 #include "ExampleLorawanTask.h"
 
-class ExampleLorawanTaskFactory: public sc::lorawan::ILorawanTaskFactory {
+class ExampleLorawanTaskFactory final: public sc::lorawan::ILorawanTaskFactory {
 
     public:
 
-/*
-        virtual ~ExampleLorawanTaskFactory() {
+        virtual ~ExampleLorawanTaskFactory() override {
             if (task) {
                 delete task;
             }
         }
-        */
 
-        virtual void createAndLaunch(sc::lorawan::LorawanDriver *lorawanDriver)
+        virtual void createAndLaunch(sc::lorawan::LorawanDriver *lorawanDriver) override
         {
             task = new ExampleLorawanTask(lorawanDriver);
             task->launch();
