@@ -1,67 +1,60 @@
 
 #include "esp_log.h"
+#include "esp_system.h"
+
+#include <cstring>
 
 #include "LorawanParametersUtil.h"
 
 namespace sc::lorawan
 {
     
-    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::strin& appKey, std::string devEui) {
+    sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey, std::string devEui) {
         LorawanParameters lorawanParameters{};
-        decode(lorawanParameters, appEui, appKey, devEui);
+        decodeAppEud(lorawanParameters, appEui);
+        decodeAppKey(lorawanParameters, appKey);
+        decodeDevEui(lorawanParameters, devEui);
         return lorawanParameters;
     }
 
     sc::lorawan::LorawanParameters LorawanParametersUtil::convert(std::string appEui, std::string appKey) {
         LorawanParameters lorawanParameters{};
-        decode(lorawanParameters, appEui, appKey, nullptr);
+        decodeAppEud(lorawanParameters, appEui);
+        decodeAppKey(lorawanParameters, appKey);
+        loadDevEuiFromMAC(lorawanParameters);
         return lorawanParameters;
     }
 
-    void LorawanParametersUtil::decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, std::string& devEui)
-    {
-
-        // appEui
+    void LorawanParametersUtil::decodeAppEud(LorawanParameters& lorawanParameters, std::string& appEui) {
+        uint8_t buf_app_eui[8];
+        if (appEui.length() != 16 || !hexStrToBin(appEui.c_str(), buf_app_eui, 8))
         {
-            uint8_t buf_app_eui[8];
-            if (appEui.size(appEui) != 16 || !hexStrToBin(appEui.c_str(), buf_app_eui, 8))
-            {
-                throw sc::lorawan::LorawanParametersException{"Invalid application EUI: " + appEui}
-            }
-            swapBytes(buf_app_eui, 8);
-            std::memcpy(&lorawanParameters.appEui, buf_app_eui, sizeof(lorawanParameters.appEui));
+            throw sc::lorawan::LorawanParametersException{"Invalid application EUI: " + appEui};
         }
-
-        // appKey
-        {
-            uint8_t buf_app_key[16];
-            if (appKey.size() != 32 || !hexStrToBin(appKey.c_str(), buf_app_key, 16))
-            {
-                throw sc::lorawan::LorawanParametersException{"Invalid application key: " + appKey}
-            }
-            std::memcpy(&lorawanParameters.appKey, buf_app_key, sizeof(lorawanParameters.appKey));
-        }
-
-        // devEui
-        {
-            uint8_t buf_dev_eui[8];
-            if (devEui) {
-                if (devEui.size() != 16 || !hexStrToBin(devEui.c_str(), buf_dev_eui, 8))
-                {
-                    throw sc::lorawan::LorawanParametersException{"Invalid device EUI: " + devEui}
-                    ESP_LOGW(TAG, "Invalid device EUI: %s", dev_eui);
-                    return false;
-                }
-                swapBytes(buf_dev_eui, 8);
-            } else {
-                putMAC(buf_dev_eui);
-            }
-            std::memcpy(&lorawanParameters.devEui, buf_dev_eui, sizeof(lorawanParameters.devEui));
-        }
-
+        swapBytes(buf_app_eui, 8);
+        std::memcpy(&lorawanParameters.appEui, buf_app_eui, sizeof(lorawanParameters.appEui));
     }
 
-    void LorawanParametersUtil::putMAC(uint8_t& buf_dev_eui[8]) {
+    void LorawanParametersUtil::decodeAppKey(LorawanParameters& lorawanParameters, std::string& appKey) {
+        uint8_t buf_app_key[16];
+        if (appKey.length() != 32 || !hexStrToBin(appKey.c_str(), buf_app_key, 16))
+        {
+            throw sc::lorawan::LorawanParametersException{"Invalid application key: " + appKey};
+        }
+        std::memcpy(&lorawanParameters.appKey, buf_app_key, sizeof(lorawanParameters.appKey));
+    }
+
+    void LorawanParametersUtil::decodeDevEui(LorawanParameters& lorawanParameters, std::string& devEui) {
+        uint8_t buf_dev_eui[8];
+        if (devEui.length() != 16 || !hexStrToBin(devEui.c_str(), buf_dev_eui, 8))
+        {
+            throw sc::lorawan::LorawanParametersException{"Invalid device EUI: " + devEui};
+        }
+        swapBytes(buf_dev_eui, 8);
+        std::memcpy(&lorawanParameters.devEui, buf_dev_eui, sizeof(lorawanParameters.devEui));
+    }
+    
+    void LorawanParametersUtil::loadDevEuiFromMAC(LorawanParameters& lorawanParameters) {
 
         // Obtiene la MAC del hardware
         uint8_t mac[6];
@@ -69,6 +62,7 @@ namespace sc::lorawan
         ESP_ERROR_CHECK(err);
 
         // Se coloca en su sitio
+        uint8_t buf_dev_eui[8];
         buf_dev_eui[7] = mac[0];
         buf_dev_eui[6] = mac[1];
         buf_dev_eui[5] = mac[2];
@@ -78,6 +72,8 @@ namespace sc::lorawan
         buf_dev_eui[1] = mac[4];
         buf_dev_eui[0] = mac[5];
 
+        std::memcpy(&lorawanParameters.devEui, buf_dev_eui, sizeof(lorawanParameters.devEui));
+        
     }
 
     bool LorawanParametersUtil::hexStrToBin(const char *hex, uint8_t *buf, int len)

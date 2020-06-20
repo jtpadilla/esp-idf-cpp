@@ -15,8 +15,11 @@ namespace sc::lorawan
             static sc::lorawan::LorawanParameters convert(std::string appEui, std::string appKey);
 
         private:
-            void decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, std::string& devEui);
-            void putMAC(LorawanParameters& lorawanParameters);
+            static void decode(LorawanParameters& lorawanParameters, std::string& appEui, std::string& appKey, std::string& devEui);
+            static void decodeAppEud(LorawanParameters& lorawanParameters, std::string& appEui);
+            static void decodeAppKey(LorawanParameters& lorawanParameters, std::string& appKey);
+            static void decodeDevEui(LorawanParameters& lorawanParameters, std::string& devEui);
+            static void loadDevEuiFromMAC(LorawanParameters& lorawanParameters);
 
             static bool hexStrToBin(const char *hex, uint8_t *buf, int len);
             static int hexTupleToByte(const char *hex);

@@ -6,7 +6,7 @@
 namespace sc::lorawan
 {
 
-    class LorawanParametersException: public exception
+    class LorawanParametersException: public std::exception
     {
 
         public:
