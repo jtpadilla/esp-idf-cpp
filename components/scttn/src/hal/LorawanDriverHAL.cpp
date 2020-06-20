@@ -1,6 +1,6 @@
 
 #include "../lmic/lmic.h"
-#include "../hal/hal_esp32.h"
+#include "../hal/LorawanDriverHAL.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

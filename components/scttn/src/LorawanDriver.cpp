@@ -5,7 +5,7 @@
 #include "esp_event.h"
 #include "esp_log.h"
 
-#include "hal/hal_esp32.h"
+#include "hal/LorawanDriverHAL.h"
 #include "lmic/lmic.h"
 
 #include "LorawanDriver.h"
