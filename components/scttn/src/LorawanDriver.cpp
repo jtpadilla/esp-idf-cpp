@@ -15,7 +15,7 @@ namespace sc::lorawan
     /**
      * Motivo por el que el codigo del usuario esta esperando
      */
-    enum TTNWaitingReason
+    enum class TTNWaitingReason
     {
         eWaitingNone,
         eWaitingForJoin,
@@ -25,7 +25,7 @@ namespace sc::lorawan
     /**
      * Tipo de evento
      */
-    enum TTNEvent {
+    enum class TTNEvent {
         eEvtNone,
         eEvtJoinCompleted,
         eEvtJoinFailed,

@@ -5,7 +5,7 @@
 namespace sc::lorawan
 {
 
-    class LorawanDriverPinsTtgoTBeam: private LorawanDriverPins
+    class LorawanDriverPinsTtgoTBeam: public LorawanDriverPins
     {
         public:
             LorawanDriverPinsTtgoTBeam():
