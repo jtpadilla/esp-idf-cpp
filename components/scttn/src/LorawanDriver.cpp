@@ -12,7 +12,6 @@
 #include "LorawanDriver.h"
 #include "LorawanLogging.h"
 
-
 namespace genielink::lorawan
 {
 
@@ -59,9 +58,9 @@ namespace genielink::lorawan
     static QueueHandle_t lmicEventQueue = nullptr;
     static TTNWaitingReason waitingReason = TTNWaitingReason::None;
 
-    #if LMIC_ENABLE_event_logging
+#if LMIC_ENABLE_event_logging
     static LorawanLogging* logging;
-    #endif
+#endif
 
     static void eventCallback(void* userData, ev_t event);
     static void messageReceivedCallback(void *userData, uint8_t port, const uint8_t *message, size_t messageSize);
@@ -81,6 +80,7 @@ namespace genielink::lorawan
 
     LorawanDriver::LorawanDriver(const LorawanDriverPins lorawanDriverPinsArg)
     {
+
     #if defined(TTN_IS_DISABLED)
         ESP_LOGE(TAG, "TTN is disabled. Configure a frequency plan using 'make menuconfig'");
         ASSERT(0);
@@ -203,19 +203,19 @@ namespace genielink::lorawan
 
     // --- Callbacks ---
 
-    #if CONFIG_LOG_DEFAULT_LEVEL >= 3 || LMIC_ENABLE_event_logging
+#if CONFIG_LOG_DEFAULT_LEVEL >= 3 || LMIC_ENABLE_event_logging
     const char *eventNames[] = { LMIC_EVENT_NAME_TABLE__INIT };
-    #endif
+#endif
 
 
     // Called by LMIC when an LMIC event (join, join failed, reset etc.) occurs
     void eventCallback(void* userData, ev_t event)
     {
-    #if LMIC_ENABLE_event_logging
+#if LMIC_ENABLE_event_logging
         logging->logEvent(event, eventNames[event], 0);
-    #elif CONFIG_LOG_DEFAULT_LEVEL >= 3
+#elif CONFIG_LOG_DEFAULT_LEVEL >= 3
         ESP_LOGI(TAG, "event %s", eventNames[event]);
-    #endif
+#endif
 
         TTNEvent ttnEvent = TTNEvent::None;
 
