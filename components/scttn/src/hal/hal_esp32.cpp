@@ -174,16 +174,16 @@ void hal_failed(const char *file, u2_t line)
 #define NOTIFY_BIT_WAKEUP 4
 
 
-HAL_ESP32 ttn_hal;
+LorawanDriverHAL ttn_hal;
 
-TaskHandle_t HAL_ESP32::lmicTask = nullptr;
-uint32_t HAL_ESP32::dioInterruptTime = 0;
-uint8_t HAL_ESP32::dioNum = 0;
+TaskHandle_t LorawanDriverHAL::lmicTask = nullptr;
+uint32_t LorawanDriverHAL::dioInterruptTime = 0;
+uint8_t LorawanDriverHAL::dioNum = 0;
 
 // -----------------------------------------------------------------------------
 // Constructor
 
-HAL_ESP32::HAL_ESP32()
+LorawanDriverHAL::LorawanDriverHAL()
     : rssiCal(10), nextAlarm(0)
 {    
 }
@@ -191,7 +191,7 @@ HAL_ESP32::HAL_ESP32()
 // -----------------------------------------------------------------------------
 // I/O
 
-void HAL_ESP32::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
+void LorawanDriverHAL::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1)
 {
     spiHost = spi_host;
     pinNSS = (gpio_num_t)nss;
@@ -206,7 +206,7 @@ void HAL_ESP32::configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t r
 }
 
 
-void IRAM_ATTR HAL_ESP32::dioIrqHandler(void *arg)
+void IRAM_ATTR LorawanDriverHAL::dioIrqHandler(void *arg)
 {
     dioInterruptTime = hal_ticks();
     dioNum = (u1_t)(long)arg;
@@ -216,7 +216,7 @@ void IRAM_ATTR HAL_ESP32::dioIrqHandler(void *arg)
         portYIELD_FROM_ISR();
 }
 
-void HAL_ESP32::ioInit()
+void LorawanDriverHAL::ioInit()
 {
     // pinNSS and pinDIO0 and pinDIO1 are required
     ASSERT(pinNSS != LMIC_UNUSED_PIN);
@@ -257,7 +257,7 @@ void HAL_ESP32::ioInit()
 // -----------------------------------------------------------------------------
 // SPI
 
-void HAL_ESP32::spiInit()
+void LorawanDriverHAL::spiInit()
 {
     // init device
     spi_device_interface_config_t spiConfig;
@@ -276,7 +276,7 @@ void HAL_ESP32::spiInit()
     ESP_LOGI(TAG, "SPI initialized");
 }
 
-void HAL_ESP32::spiWrite(uint8_t cmd, const uint8_t *buf, size_t len)
+void LorawanDriverHAL::spiWrite(uint8_t cmd, const uint8_t *buf, size_t len)
 {
     memset(&spiTransaction, 0, sizeof(spiTransaction));
     spiTransaction.addr = cmd;
@@ -286,7 +286,7 @@ void HAL_ESP32::spiWrite(uint8_t cmd, const uint8_t *buf, size_t len)
     ESP_ERROR_CHECK(err);
 }
 
-void HAL_ESP32::spiRead(uint8_t cmd, uint8_t *buf, size_t len)
+void LorawanDriverHAL::spiRead(uint8_t cmd, uint8_t *buf, size_t len)
 {
     memset(buf, 0, len);
     memset(&spiTransaction, 0, sizeof(spiTransaction));
@@ -316,7 +316,7 @@ void HAL_ESP32::spiRead(uint8_t cmd, uint8_t *buf, size_t len)
 // Convert LMIC tick time (ostime_t) to ESP absolute time.
 // `osTime` is assumed to be somewhere between one hour in the past and
 // 18 hours into the future. 
-int64_t HAL_ESP32::osTimeToEspTime(int64_t espNow, uint32_t osTime)
+int64_t LorawanDriverHAL::osTimeToEspTime(int64_t espNow, uint32_t osTime)
 {
     int64_t espTime;
     uint32_t osNow = (uint32_t)(espNow >> 4);
@@ -340,7 +340,7 @@ int64_t HAL_ESP32::osTimeToEspTime(int64_t espNow, uint32_t osTime)
     return espTime;
 }
 
-void HAL_ESP32::timerInit()
+void LorawanDriverHAL::timerInit()
 {
     esp_timer_create_args_t timerConfig = {
         .callback = &timerCallback,
@@ -354,12 +354,12 @@ void HAL_ESP32::timerInit()
     ESP_LOGI(TAG, "Timer initialized");
 }
 
-void HAL_ESP32::setNextAlarm(int64_t time)
+void LorawanDriverHAL::setNextAlarm(int64_t time)
 {
     nextAlarm = time;
 }
 
-void HAL_ESP32::armTimer(int64_t espNow)
+void LorawanDriverHAL::armTimer(int64_t espNow)
 {
     if (nextAlarm == 0)
         return;
@@ -369,12 +369,12 @@ void HAL_ESP32::armTimer(int64_t espNow)
     esp_timer_start_once(timer, timeout);
 }
 
-void HAL_ESP32::disarmTimer()
+void LorawanDriverHAL::disarmTimer()
 {
     esp_timer_stop(timer);
 }
 
-void HAL_ESP32::timerCallback(void *arg)
+void LorawanDriverHAL::timerCallback(void *arg)
 {
     xTaskNotify(lmicTask, NOTIFY_BIT_TIMER, eSetBits);
 }
@@ -383,7 +383,7 @@ void HAL_ESP32::timerCallback(void *arg)
 // - scheduled timer due to scheduled job or waiting for a given time
 // - wake up event from the client code
 // - I/O interrupt (DIO0 or DIO1 pin)
-bool HAL_ESP32::wait(WaitKind waitKind)
+bool LorawanDriverHAL::wait(WaitKind waitKind)
 {
     TickType_t ticksToWait = waitKind == WaitKind::CHECK_IO ? 0 : portMAX_DELAY;
     while (true)
@@ -421,7 +421,7 @@ bool HAL_ESP32::wait(WaitKind waitKind)
 }
 
 
-uint32_t HAL_ESP32::waitUntil(uint32_t osTime)
+uint32_t LorawanDriverHAL::waitUntil(uint32_t osTime)
 {
     int64_t espNow = esp_timer_get_time();
     int64_t espTime = osTimeToEspTime(espNow, osTime);
@@ -436,12 +436,12 @@ uint32_t HAL_ESP32::waitUntil(uint32_t osTime)
 
 // Called by client code to wake up LMIC to do something,
 // e.g. send a submitted messages.
-void HAL_ESP32::wakeUp()
+void LorawanDriverHAL::wakeUp()
 {
     xTaskNotify(lmicTask, NOTIFY_BIT_WAKEUP, eSetBits);
 }
 
-uint8_t HAL_ESP32::checkTimer(u4_t osTime)
+uint8_t LorawanDriverHAL::checkTimer(u4_t osTime)
 {
     int64_t espNow = esp_timer_get_time();
     int64_t espTime = osTimeToEspTime(espNow, osTime);
@@ -453,7 +453,7 @@ uint8_t HAL_ESP32::checkTimer(u4_t osTime)
     return 0;
 }
 
-void HAL_ESP32::sleep()
+void LorawanDriverHAL::sleep()
 {
     if (wait(WaitKind::CHECK_IO))
         return;
@@ -470,28 +470,28 @@ void HAL_ESP32::sleep()
 // -----------------------------------------------------------------------------
 // Synchronization between application code and background task
 
-void HAL_ESP32::initCriticalSection()
+void LorawanDriverHAL::initCriticalSection()
 {
     mutex = xSemaphoreCreateRecursiveMutex();
 }
 
-void HAL_ESP32::enterCriticalSection()
+void LorawanDriverHAL::enterCriticalSection()
 {
     xSemaphoreTakeRecursive(mutex, portMAX_DELAY);
 }
 
-void HAL_ESP32::leaveCriticalSection()
+void LorawanDriverHAL::leaveCriticalSection()
 {
     xSemaphoreGiveRecursive(mutex);
 }
 
 // -----------------------------------------------------------------------------
 
-void HAL_ESP32::lmicBackgroundTask(void* pvParameter) {
+void LorawanDriverHAL::lmicBackgroundTask(void* pvParameter) {
     os_runloop();
 }
 
-void HAL_ESP32::init()
+void LorawanDriverHAL::init()
 {
     // configure radio I/O and interrupt handler
     ioInit();
@@ -501,7 +501,7 @@ void HAL_ESP32::init()
     timerInit();
 }
 
-void HAL_ESP32::startLMICTask() {
+void LorawanDriverHAL::startLMICTask() {
     xTaskCreate(lmicBackgroundTask, "ttn_lmic", 1024 * 4, nullptr, CONFIG_TTN_BG_TASK_PRIO, &lmicTask);
 
     // enable interrupts

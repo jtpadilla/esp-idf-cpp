@@ -15,11 +15,11 @@ enum class WaitKind {
     WAIT_FOR_TIMER
 };
 
-class HAL_ESP32
+class LorawanDriverHAL
 {
 
     public:
-        HAL_ESP32();
+        LorawanDriverHAL();
 
         void configurePins(spi_host_device_t spi_host, uint8_t nss, uint8_t rxtx, uint8_t rst, uint8_t dio0, uint8_t dio1);
         void init();
@@ -72,5 +72,5 @@ class HAL_ESP32
 
 };
 
-extern HAL_ESP32 ttn_hal;
+extern LorawanDriverHAL ttn_hal;
 
