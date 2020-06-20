@@ -9,6 +9,8 @@
 #include <driver/spi_master.h>
 #include <esp_timer.h>
 
+#define LMIC_UNUSED_PIN 0xff
+
 namespace sc::lorawan::hal
 {
 
