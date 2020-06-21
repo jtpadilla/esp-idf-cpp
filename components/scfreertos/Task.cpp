@@ -7,7 +7,7 @@
 #include "include/Task.h"
 #include "sdkconfig.h"
 
-namespace scfreertos
+namespace genielink::os
 {
 
 	static const char* LOG_TAG = "Task";

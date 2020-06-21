@@ -4,7 +4,7 @@
 #include <freertos/task.h>
 #include <string>
 
-namespace scfreertos
+namespace genielink::os
 {
 
 	/**

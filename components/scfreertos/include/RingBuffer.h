@@ -3,7 +3,7 @@
 #include <freertos/FreeRTOS.h>
 #include "freertos/ringbuf.h"
 
-namespace scfreertos
+namespace genielink::os
 {
 
     class Ringbuffer {

@@ -12,7 +12,7 @@
 
 #include <GeneralUtils.h>
 
-namespace scsystem
+namespace genielink::sys
 {
 
 	static const char* LOG_TAG = "GeneralUtils";

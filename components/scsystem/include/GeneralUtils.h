@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace scsystem
+namespace genielink::sys
 {
 
 	/**

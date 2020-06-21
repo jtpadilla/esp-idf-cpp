@@ -9,7 +9,7 @@ extern "C" {
 #include <esp_heap_caps.h>
 }
 
-namespace scsystem
+namespace genielink::sys
 {
 
 	typedef volatile struct {

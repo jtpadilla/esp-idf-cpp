@@ -10,7 +10,7 @@
 
 #include <Timer.h>
 
-namespace scfreertos
+namespace genielink::os
 {
 
 	static std::map<void*, Timer*> timersMap;

@@ -1,7 +1,7 @@
 
 #include <RingBuffer.h>
 
-namespace scfreertos
+namespace genielink::os
 {
 
 	/**

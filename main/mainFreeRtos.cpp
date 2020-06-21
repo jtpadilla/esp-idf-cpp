@@ -4,13 +4,13 @@
 #include "Task.h"
 #include "GeneralUtils.h"
 
-class MyTask: public scfreertos::Task
+class MyTask: public genielink::os::Task
 {
 
 	public:
 
 		MyTask(std::string taskName, uint32_t millisecsParam):
-			scfreertos::Task{taskName}, millisecs {millisecsParam}
+			genielink::os::Task{taskName}, millisecs {millisecsParam}
 		{
 		}
 
@@ -23,7 +23,7 @@ class MyTask: public scfreertos::Task
 				delay(millisecs);
 			}
 
-			scsystem::GeneralUtils::dumpInfo();
+			genielink::sys::GeneralUtils::dumpInfo();
 			printf("Done\n");
 
 		}

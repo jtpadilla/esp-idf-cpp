@@ -5,7 +5,7 @@
 
 static const char* LOG_TAG = "Semaphore";
 
-namespace scfreertos
+namespace genielink::os
 {
 
 	/**
