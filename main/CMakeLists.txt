@@ -8,5 +8,5 @@ idf_component_register(
         "ExampleLorawanTask.h"
         "ExampleLorawanTask.cpp"
 
-    REQUIRES scfreertos scsystem lorawan
+    REQUIRES os sys lorawan
 )
